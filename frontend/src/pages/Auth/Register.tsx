@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import http from "../../lib/axios";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import Link from "../../components/Link/Link";
@@ -43,15 +43,6 @@ const Register: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const http = axios.create({
-        baseURL: 'http://localhost:80',
-        headers: {
-            "Content-Type": "application/json",
-        },
-        withCredentials: true,
-        withXSRFToken: true,
-    });
-
     const register = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
 
@@ -67,7 +58,7 @@ const Register: React.FC = () => {
                 http.post('/api/register', data).then((res) => {
                     if (res.status === HTTP_CREATED) {
                         resetInput();
-                        navigate("/mypage/profile", { state: {type: 'success', text: 'ユーザー登録が完了しました'} });
+                        navigate("/email-verify", { state: {type: 'success', text: 'ユーザー登録が完了しました'}, replace: true });
                     }
                 }).catch((e) => {
                     if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {

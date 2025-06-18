@@ -4,12 +4,16 @@ import { StyledLink } from "./StyledLink";
 type LinkProps = {
     to: string,
     text: string,
+    fn?: () => void,
 };
 
-const Link: React.FC<LinkProps> = ({to, text}) => {
+const Link: React.FC<LinkProps> = ({to, text, fn}) => {
 
     return (
-        <StyledLink to={to}>
+        <StyledLink
+            to={to}
+            onClick={fn}
+        >
             {text}
         </StyledLink>
     );

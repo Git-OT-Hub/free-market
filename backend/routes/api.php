@@ -20,12 +20,13 @@ use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-Route::middleware('auth:sanctum')->group(function() {
+Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-});
 
-Route::middleware('auth:sanctum')->get('/users', [TaskController::class, 'index']);
-// Route::get('/users', [TaskController::class, 'index']);
+    Route::middleware(['verified'])->group(function() {
+        Route::get('/users', [TaskController::class, 'index']);
+    });
+});

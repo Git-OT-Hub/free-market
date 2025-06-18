@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import http from '../../lib/axios';
 
 type User = {
     name: string,
@@ -11,31 +11,33 @@ function Login() {
   const [password, setPassword] = useState('');
   const [users, setUsers] = useState<User[]>([]);
 
-  const http = axios.create({
-    baseURL: 'http://localhost:80',
-    headers: {
-        "Content-Type": "application/json",
-    },
-    withCredentials: true,
-    withXSRFToken: true,
-  });
-
   const login = () => {
-    http.get('/sanctum/csrf-cookie', { withCredentials: true }).then(() => {
-        http.post('/api/login', {email, password}, { withCredentials: true }).then((res) => {
-            console.log(res.data);
+    http.get('/sanctum/csrf-cookie').then(() => {
+        http.post('/api/login', {email, password}).then((res) => {
+          console.log(res);
+
+          setTimeout(() => {
+            http.get('/api/user').then((res) => {
+              console.log(res);
+            }).catch((err) => {
+              console.error('user fetch failed', err);
+            });
+          }, 300);
         });
     });
   }
   const logout = () => {
-    http.post('/api/logout').then((res) => {
-        console.log(res);
+    http.get('/sanctum/csrf-cookie').then(() => {
+      http.post('/api/logout').then((res) => {
+          console.log(res);
+      });
     });
   }
   const getUsers = () => {
-    axios.get('/api/users').then((res) => {
+    http.get('/api/users').then((res) => {
+      console.log(res);
       setUsers(res.data);
-    })
+    });
   }
   const reset = () => {setUsers([])}
   const onChangeEmail = (e) => setEmail(e.target.value);

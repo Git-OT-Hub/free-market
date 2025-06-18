@@ -56,25 +56,10 @@ class AuthenticatedSessionController extends Controller
      * @return mixed
      */
     public function store(LoginRequest $request)
-    // public function store(Request $request)
     {
         return $this->loginPipeline($request)->then(function ($request) {
             return app(LoginResponse::class);
         });
-
-        // $request->validate([
-        //     'email' => ['required', 'email'],
-        //     'password' => ['required'],
-        // ]);
-
-        // $credentials = $request->only('email', 'password');
-
-        // if (Auth::attempt($credentials)) {
-        //     $request->session()->regenerate();
-        //     return response()->json(Auth::user(), 200);
-        // }
-
-        // return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     /**

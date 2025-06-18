@@ -147,7 +147,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
-        // Features::emailVerification(),
+        Features::emailVerification(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
         Features::twoFactorAuthentication([
@@ -155,6 +155,11 @@ return [
             'confirmPassword' => true,
             // 'window' => 0,
         ]),
+    ],
+
+
+    'redirects' => [
+        'email-verification' => env('FRONTEND_URL', 'http://localhost:5173') . '/email-verify',
     ],
 
 ];

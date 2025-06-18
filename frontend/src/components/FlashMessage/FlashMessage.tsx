@@ -24,7 +24,8 @@ const FlashMessage: React.FC = () => {
     if (!flashMessage.success && flashMessage.failure) {
         return (
             <StyledFlashMessage $isSuccess={false}>
-                {flashMessage.failure}
+                <span>{flashMessage.failure}</span>
+                <button onClick={resetFlashMessage}>×</button>
             </StyledFlashMessage>
         );
     }
