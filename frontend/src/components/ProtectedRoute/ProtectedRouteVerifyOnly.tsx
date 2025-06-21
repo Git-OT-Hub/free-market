@@ -3,11 +3,11 @@ import { useAuth } from "../../hooks/useAuth";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 
-type ProtectedRouteVerifyOnlyProps = {
+type ProtectedRouteVerifyProps = {
     children: ReactNode;
 };
 
-const ProtectedRouteVerifyOnly: React.FC<ProtectedRouteVerifyOnlyProps> = ({ children }) => {
+const ProtectedRouteVerify: React.FC<ProtectedRouteVerifyProps> = ({ children }) => {
     const { loading, isAuthenticated, isVerified } = useAuth();
     const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const ProtectedRouteVerifyOnly: React.FC<ProtectedRouteVerifyOnlyProps> = ({ chi
         }
     }, [loading, isAuthenticated, isVerified, navigate]);
 
-    if (loading) {
+    if (loading || isAuthenticated && !isVerified) {
         return (
             <h1>Loading...</h1>
         );
@@ -26,4 +26,4 @@ const ProtectedRouteVerifyOnly: React.FC<ProtectedRouteVerifyOnlyProps> = ({ chi
     return children;
 };
 
-export default ProtectedRouteVerifyOnly;
+export default ProtectedRouteVerify;

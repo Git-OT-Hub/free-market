@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import ProtectedRouteAuthOnly from "./components/ProtectedRoute/ProtectedRouteAuthOnly";
-import ProtectedRouteVerifyOnly from "./components/ProtectedRoute/ProtectedRouteVerifyOnly";
+import ProtectedRouteAuth from "./components/ProtectedRoute/ProtectedRouteAuth";
+import ProtectedRouteVerify from "./components/ProtectedRoute/ProtectedRouteVerifyOnly";
+import ProtectedRouteNoAuth from "./components/ProtectedRoute/ProtectedRouteNoAuth";
 import Layout from "./pages/Layout/Layout";
 import Item from "./pages/Item/Item";
 import Register from "./pages/Auth/Register";
@@ -16,16 +17,24 @@ const App = () => {
 			<Routes>
 				<Route path="/" element={<Layout />}>
 					<Route index element={
-						<ProtectedRouteVerifyOnly>
+						<ProtectedRouteVerify>
 							<Item />
-						</ProtectedRouteVerifyOnly>
+						</ProtectedRouteVerify>
 					} />
-					<Route path="register" element={<Register />} />
-					<Route path="login" element={<Login />} />
+					<Route path="register" element={
+						<ProtectedRouteNoAuth>
+							<Register />
+						</ProtectedRouteNoAuth>
+					} />
+					<Route path="login" element={
+						<ProtectedRouteNoAuth>
+							<Login />
+						</ProtectedRouteNoAuth>
+					} />
 					<Route path="email-verify" element={
-						<ProtectedRouteAuthOnly>
+						<ProtectedRouteAuth>
 							<EmailVerify />
-						</ProtectedRouteAuthOnly>
+						</ProtectedRouteAuth>
 					} />
 					<Route path="mypage">
 						<Route path="profile" element={

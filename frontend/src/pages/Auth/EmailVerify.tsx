@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { success, failure } from "../../store/reducers/flashMessage";
@@ -18,7 +18,7 @@ const EmailVerify: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
 
     // ヘッダーの切り替え
-    useEffect(() => {
+    useLayoutEffect(() => {
         dispatch(fetchAuth(location.pathname));
     }, [location.pathname]);
 

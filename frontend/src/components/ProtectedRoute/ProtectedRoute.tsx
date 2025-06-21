@@ -14,9 +14,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     useEffect(() => {
         if (!loading) {
             if (!isAuthenticated) {
-                navigate('/login', { replace: true });
+                navigate('/login', { state: {type: 'failure', text: 'ログインが必要です'}, replace: true });
             } else if (!isVerified) {
-                navigate('/email-verify', { replace: true });
+                navigate('/email-verify', { state: {type: 'failure', text: 'メール認証を完了してください。'}, replace: true });
             }
         }
     }, [loading, isAuthenticated, isVerified, navigate]);
