@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export function useAuth() {
+export const useAuth = () => {
     const [user, setUser] = useState<null | { name: string, email: string, email_verified_at: string | null }>(null);
     const [loading, setLoading] = useState<boolean>(true);
 

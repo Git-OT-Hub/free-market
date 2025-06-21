@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ProtectedRouteAuthOnly from "./components/ProtectedRoute/ProtectedRouteAuthOnly";
+import ProtectedRouteVerifyOnly from "./components/ProtectedRoute/ProtectedRouteVerifyOnly";
 import Layout from "./pages/Layout/Layout";
 import Item from "./pages/Item/Item";
 import Register from "./pages/Auth/Register";
@@ -14,7 +15,11 @@ const App = () => {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Layout />}>
-					<Route index element={<Item />} />
+					<Route index element={
+						<ProtectedRouteVerifyOnly>
+							<Item />
+						</ProtectedRouteVerifyOnly>
+					} />
 					<Route path="register" element={<Register />} />
 					<Route path="login" element={<Login />} />
 					<Route path="email-verify" element={

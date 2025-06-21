@@ -5,6 +5,8 @@ import { success, failure } from "../../store/reducers/flashMessage";
 import { StyledContent, StyledButton } from "./StyledEmailVerify";
 import Link from "../../components/Link/Link";
 import http from "../../lib/axios";
+import type { AppDispatch } from "../../store/store";
+import { fetchAuth } from "../../store/reducers/authAndLocation";
 
 const HTTP_ACCEPTED = 202;
 const HTTP_NO_CONTENT = 204;
@@ -13,7 +15,12 @@ const VERIFIED = "1";
 const EmailVerify: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
+
+    // ヘッダーの切り替え
+    useEffect(() => {
+        dispatch(fetchAuth(location.pathname));
+    }, [location.pathname]);
 
     // フラッシュメッセージ表示
     useEffect(() => {
@@ -90,6 +97,7 @@ const EmailVerify: React.FC = () => {
                     to=""
                     text="認証メールを再送する"
                     fn={resendVerificationEmail}
+                    $color="#0873cc"
                 />
             </div>
         </StyledContent>

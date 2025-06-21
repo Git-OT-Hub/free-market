@@ -2,7 +2,11 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { memo } from "react";
 
-export const StyledLink = memo(styled(Link)`
+type StyledLinkProps = {
+    $color: string,
+}
+
+export const StyledLink = memo(styled(Link)<StyledLinkProps>`
     text-decoration: none;
-    color: #0873cc;
+    color: ${({ $color }) => $color};
 `);

@@ -1,74 +1,144 @@
-import { useState } from 'react';
-import http from '../../lib/axios';
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../store/store";
+import { fetchAuth } from "../../store/reducers/authAndLocation";
+import { success, failure } from "../../store/reducers/flashMessage";
+import http from "../../lib/axios";
+import Input from "../../components/Input/Input";
+import Button from "../../components/Button/Button";
+import Link from "../../components/Link/Link";
+import { StyledContent, StyledFormDiv, StyledLink } from "./StyledLogin";
 
-type User = {
-    name: string,
-    email: string,
+const HTTP_OK = 200;
+const HTTP_UNPROCESSABLE_ENTITY = 422;
+
+export type Error = {
+    email?: string[],
+    password?: string[],
 }
 
-function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
-
-  const login = () => {
-    http.get('/sanctum/csrf-cookie').then(() => {
-        http.post('/api/login', {email, password}).then((res) => {
-          console.log(res);
-
-          setTimeout(() => {
-            http.get('/api/user').then((res) => {
-              console.log(res);
-            }).catch((err) => {
-              console.error('user fetch failed', err);
-            });
-          }, 300);
-        });
+const Login: React.FC = () => {
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [errors, setErrors] = useState<Error>({
+        email: [],
+        password: [],
     });
-  }
-  const logout = () => {
-    http.get('/sanctum/csrf-cookie').then(() => {
-      http.post('/api/logout').then((res) => {
-          console.log(res);
-      });
-    });
-  }
-  const getUsers = () => {
-    http.get('/api/users').then((res) => {
-      console.log(res);
-      setUsers(res.data);
-    });
-  }
-  const reset = () => {setUsers([])}
-  const onChangeEmail = (e) => setEmail(e.target.value);
-  const onChangePassword = (e) => setPassword(e.target.value);
 
-  return (
-    <div className="App">
-      <nav>
-        <button onClick={login}>ログイン</button>
-        <button onClick={logout}>ログアウト</button>
-        <button onClick={getUsers}>User 一覧</button>
-        <button onClick={reset}>リセット</button>
-      </nav>
-        <br />
-      <div>
-        <label>email</label>
-        <input type="text" value={email} onChange={onChangeEmail}/>
-        <label>password</label>
-        <input type="password" value={password} onChange={onChangePassword}/>
-      </div>
-      <div>
-        {
-          users.map((user) => {
-            return (
-              <p key={user.email}>{user.name}</p>
-            )
-          })
+    const dispatch: AppDispatch = useDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // ヘッダーの切り替え
+    useEffect(() => {
+        dispatch(fetchAuth(location.pathname));
+    }, [location.pathname]);
+
+    // フラッシュメッセージ
+    useEffect(() => {
+        if (location.state) {
+            const createFlashMessage = () => {
+                switch (location.state.type) {
+                    case 'success':
+                        return dispatch(success(location.state.text));
+                    case 'failure':
+                        return dispatch(failure(location.state.text));
+                    default:
+                        alert('不明なメッセージです');
+                }
+            };
+
+            createFlashMessage();
+
+            navigate(location.pathname, { replace: true });
         }
-      </div>
-    </div>
-  );
-}
+    }, [location.state, dispatch]);
+
+    const resetInput = (): void => {
+        setEmail('');
+        setPassword('');
+        setErrors({
+            email: [],
+            password: [],
+        });
+    };
+
+    const login = (e: React.FormEvent<HTMLFormElement>): void => {
+        e.preventDefault();
+
+        try {
+            const data = {
+                email: email,
+                password: password,
+            };
+
+            http.get('/sanctum/csrf-cookie').then(() => {
+                http.post('/api/login', data).then((res) => {
+                    console.log(res);
+                    if (res.status === HTTP_OK) {
+                        http.get('/api/user').then((res) => {
+                            console.log(res);
+                            resetInput();
+
+                            if (!res.data.email_verified_at) {
+                                return navigate("/email-verify", { state: {type: 'failure', text: 'メール認証を完了してください。'}, replace: true });
+                            }
+
+                            navigate("/", { state: {type: 'success', text: 'ログインしました'}, replace: true });
+                        }).catch((err) => {
+                            console.log(err);
+                            alert('ログインに失敗しました');
+                        });
+                    }
+                }).catch((e) => {
+                    console.log(e);
+                    if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
+                        const responseData = {...e.response.data.errors};
+                        setErrors(responseData);
+                    }
+                });
+            });
+        } catch (error) {
+            alert('ログインに失敗しました');
+        }
+    };
+
+    return (
+        <StyledContent>
+            <h1>ログイン</h1>
+            <form onSubmit={login}>
+                <Input
+                    label="メールアドレス"
+                    errorKey="email"
+                    errors={errors}
+                    type="email"
+                    value={email}
+                    fn={useCallback((e) => setEmail(e.target.value), [])}
+                />
+                <Input
+                    label="パスワード"
+                    errorKey="password"
+                    errors={errors}
+                    type="password"
+                    value={password}
+                    fn={useCallback((e) => setPassword(e.target.value), [])}
+                />
+                <StyledFormDiv>
+                    <Button
+                        label="ログインする"
+                    />
+                </StyledFormDiv>
+            </form>
+            <StyledLink>
+                <Link
+                    to="/register"
+                    text="会員登録はこちら"
+                    $color="#0873cc"
+                />
+            </StyledLink>
+        </StyledContent>
+    );
+};
 
 export default Login;

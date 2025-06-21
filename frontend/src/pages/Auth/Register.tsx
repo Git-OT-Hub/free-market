@@ -1,5 +1,8 @@
-import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useCallback, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../store/store";
+import { fetchAuth } from "../../store/reducers/authAndLocation";
 import http from "../../lib/axios";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
@@ -28,6 +31,15 @@ const Register: React.FC = () => {
         password_confirmation: [],
     });
 
+    const location = useLocation();
+    const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // ヘッダーの切り替え
+    useEffect(() => {
+        dispatch(fetchAuth(location.pathname));
+    }, [location.pathname]);
+
     const resetInput = (): void => {
         setName('');
         setEmail('');
@@ -40,8 +52,6 @@ const Register: React.FC = () => {
             password_confirmation: [],
         });
     };
-
-    const navigate = useNavigate();
 
     const register = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
@@ -118,6 +128,7 @@ const Register: React.FC = () => {
                 <Link
                     to="/login"
                     text="ログインはこちら"
+                    $color="#0873cc"
                 />
             </StyledLink>
         </StyledContent>

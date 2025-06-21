@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import flashMessage from "./reducers/flashMessage";
+import authAndLocation from "./reducers/authAndLocation";
 
 const store = configureStore({
     reducer: {
-        flashMessage: flashMessage
+        flashMessage: flashMessage,
+        authAndLocation: authAndLocation,
     }
 });
 
