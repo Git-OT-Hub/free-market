@@ -92,7 +92,6 @@ const Login: React.FC = () => {
                         });
                     }
                 }).catch((e) => {
-                    console.log(e);
                     if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
                         const responseData = {...e.response.data.errors};
                         setErrors(responseData);

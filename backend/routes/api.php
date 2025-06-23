@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\Auth\RegisteredUserController;
 use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\API\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     Route::middleware(['verified'])->group(function() {
-        Route::get('/users', [TaskController::class, 'index']);
+        Route::get('/profile', [ProfileController::class, 'getProfile']);
+        Route::post('/profile/update', [ProfileController::class, 'update']);
     });
 });

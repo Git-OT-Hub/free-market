@@ -4,7 +4,7 @@ import type { Error } from "../../pages/Auth/Register";
 
 type InputProps = {
     label: string,
-    errorKey: "name" | "email" | "password" | "password_confirmation",
+    errorKey: "name" | "email" | "password" | "password_confirmation" | "post_code" | "address" | "building",
     errors: Error,
     type: string,
     value: string,

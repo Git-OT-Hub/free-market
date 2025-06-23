@@ -17,6 +17,10 @@ export type Error = {
     email?: string[],
     password?: string[],
     password_confirmation?: string[],
+    post_code?: string[],
+    address?: string[],
+    building?: string[],
+    image?: string[],
 }
 
 const Register: React.FC = () => {

@@ -64,6 +64,8 @@ class RegisteredUserController extends Controller
 
         $this->guard->login($user, $request->boolean('remember'));
 
+        $user->profile()->create();
+
         return app(RegisterResponse::class);
     }
 }

@@ -9,4 +9,13 @@ const http = axios.create({
     withXSRFToken: true,
 });
 
+export const httpMultipart = axios.create({
+    baseURL: 'http://localhost:80',
+    headers: {
+        "Content-Type": "multipart/form-data",
+    },
+    withCredentials: true,
+    withXSRFToken: true,
+});
+
 export default http;

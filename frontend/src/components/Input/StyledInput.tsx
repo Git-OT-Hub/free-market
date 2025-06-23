@@ -17,7 +17,7 @@ export const StyledInput = memo(styled.div`
 
         li {
             color: #fb5555;
-            font-size: 12px;
+            font-size: 14px;
         }
     }
 

@@ -5,6 +5,8 @@ import http from "../../lib/axios";
 import Link from "../Link/Link";
 import { StyledHeader, StyledImg, StyledAnotherImg, StyledSearch, StyledNav, StyledButLink } from "./StyledHeader";
 
+const HTTP_NO_CONTENT = 204;
+
 const Header: React.FC = () => {
     const authAndLocation = useSelector((state: RootState) => state.authAndLocation);
 
@@ -16,7 +18,9 @@ const Header: React.FC = () => {
         if (confirm("ログアウトしますか？")) {
             http.get('/sanctum/csrf-cookie').then(() => {
                 http.post('/api/logout').then((res) => {
-                    navigate('/login', { state: {type: 'success', text: 'ログアウトしました'}, replace: true });
+                    if (res.status === HTTP_NO_CONTENT) {
+                        navigate('/login', { state: {type: 'success', text: 'ログアウトしました'}, replace: true });
+                    }
                 }).catch(() => {
                     alert('ログアウトに失敗しました');
                 });
