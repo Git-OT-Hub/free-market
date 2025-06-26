@@ -1,4 +1,4 @@
-import { useLayoutEffect, useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { success, failure } from "../../store/reducers/flashMessage";
@@ -6,7 +6,6 @@ import { StyledContent, StyledButton } from "./StyledEmailVerify";
 import Link from "../../components/Link/Link";
 import http from "../../lib/axios";
 import type { AppDispatch } from "../../store/store";
-import { fetchAuth } from "../../store/reducers/authAndLocation";
 
 const HTTP_ACCEPTED = 202;
 const HTTP_NO_CONTENT = 204;
@@ -16,11 +15,6 @@ const EmailVerify: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
-
-    // ヘッダーの切り替え
-    useLayoutEffect(() => {
-        dispatch(fetchAuth(location.pathname));
-    }, [location.pathname]);
 
     // フラッシュメッセージ表示
     useEffect(() => {

@@ -1,31 +1,35 @@
 import { useEffect, useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import http, { httpMultipart } from "../../../lib/axios";
-import { success, failure } from "../../../store/reducers/flashMessage";
-import type { AppDispatch } from "../../../store/store";
-import { StyledContent, StyledImage, StyledImageCircle, StyledNoImage, StyledImageLabel, StyledFormDiv } from "./StyledProfile";
-import Input from "../../../components/Input/Input";
-import Button from "../../../components/Button/Button";
-import type { UserInformationError } from "../../../types/formError";
-
+import http, { httpMultipart } from "../../lib/axios";
+import { success, failure } from "../../store/reducers/flashMessage";
+import type { AppDispatch } from "../../store/store";
+import { StyledContent, StyledImage, StyledImageCircle, StyledNoImage, StyledImageLabel, StyledFormDiv } from "./StyledSell";
+import Input from "../../components/Input/Input";
+import Button from "../../components/Button/Button";
+import type { ItemError } from "../../types/formError"; 
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 
-const ProfileEdit: React.FC = () => {
+const Sell: React.FC = () => {
+    const [errors, setErrors] = useState<ItemError>({
+        image: [],
+        category_id: [],
+        condition: [],
+        name: [],
+        brand: [],
+        description: [],
+        price: [],
+    });
+
+    // ここからスタート
     const [name, setName] = useState<string>('');
     const [postCode, setPostCode] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [building, setBuilding] = useState<string>('');
-    const [errors, setErrors] = useState<UserInformationError>({
-        name: [],
-        post_code: [],
-        address: [],
-        building: [],
-        image: [],
-    });
+    
     const [fileTypeError, setFileTypeError] = useState<string>('');
     const [newImage, setNewImage] = useState<File>();
     const [preview, setPreview] = useState<string>("");
@@ -213,4 +217,4 @@ const ProfileEdit: React.FC = () => {
     );
 };
 
-export default ProfileEdit;
+export default Sell;

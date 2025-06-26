@@ -2,26 +2,21 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../store/store";
-import { fetchAuth } from "../../store/reducers/authAndLocation";
 import { success, failure } from "../../store/reducers/flashMessage";
 import http from "../../lib/axios";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import Link from "../../components/Link/Link";
 import { StyledContent, StyledFormDiv, StyledLink } from "./StyledLogin";
+import type { UserInformationError } from "../../types/formError";
 
 const HTTP_OK = 200;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 
-export type Error = {
-    email?: string[],
-    password?: string[],
-}
-
 const Login: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [errors, setErrors] = useState<Error>({
+    const [errors, setErrors] = useState<UserInformationError>({
         email: [],
         password: [],
     });
@@ -29,11 +24,6 @@ const Login: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-
-    // ヘッダーの切り替え
-    useEffect(() => {
-        dispatch(fetchAuth(location.pathname));
-    }, [location.pathname]);
 
     // フラッシュメッセージ
     useEffect(() => {
@@ -55,15 +45,6 @@ const Login: React.FC = () => {
         }
     }, [location.state, dispatch]);
 
-    const resetInput = (): void => {
-        setEmail('');
-        setPassword('');
-        setErrors({
-            email: [],
-            password: [],
-        });
-    };
-
     const login = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
 
@@ -79,7 +60,6 @@ const Login: React.FC = () => {
                     if (res.status === HTTP_OK) {
                         http.get('/api/user').then((res) => {
                             console.log(res);
-                            resetInput();
 
                             if (!res.data.email_verified_at) {
                                 return navigate("/email-verify", { state: {type: 'failure', text: 'メール認証を完了してください。'}, replace: true });

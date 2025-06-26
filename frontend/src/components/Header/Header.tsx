@@ -81,7 +81,7 @@ const Header: React.FC = () => {
                         $color="#fff"
                     />
                     <StyledButLink
-                        to="/mypage"
+                        to="/sell"
                         $color="#000000"
                         $background="#fff"
                         $padding="4px 16px"

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ProtectedRouteAuth from "./components/ProtectedRoute/ProtectedRouteAuth";
-import ProtectedRouteVerify from "./components/ProtectedRoute/ProtectedRouteVerifyOnly";
+import ProtectedRouteVerify from "./components/ProtectedRoute/ProtectedRouteVerify";
 import ProtectedRouteNoAuth from "./components/ProtectedRoute/ProtectedRouteNoAuth";
 import Layout from "./pages/Layout/Layout";
 import Item from "./pages/Item/Item";
@@ -9,6 +9,8 @@ import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
 import ProfileEdit from "./pages/Mypage/Profile/ProfileEdit";
 import EmailVerify from "./pages/Auth/EmailVerify";
+import Mypage from "./pages/Mypage/Mypage";
+import Sell from "./pages/Sell/Sell";
 
 const App = () => {
 
@@ -37,12 +39,18 @@ const App = () => {
 						</ProtectedRouteAuth>
 					} />
 					<Route path="mypage">
+						<Route index element={<Mypage />} />
 						<Route path="profile" element={
 							<ProtectedRoute>
 								<ProfileEdit />
 							</ProtectedRoute>
 						} />
 					</Route>
+					<Route path="sell" element={
+						<ProtectedRoute>
+							<Sell />
+						</ProtectedRoute>
+					} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

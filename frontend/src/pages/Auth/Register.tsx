@@ -1,61 +1,28 @@
-import { useState, useCallback, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store/store";
-import { fetchAuth } from "../../store/reducers/authAndLocation";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import http from "../../lib/axios";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import Link from "../../components/Link/Link";
 import { StyledContent, StyledFormDiv, StyledLink } from "./StyledRegister";
+import type { UserInformationError } from "../../types/formError";
 
 const HTTP_CREATED = 201;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
-
-export type Error = {
-    name?: string[],
-    email?: string[],
-    password?: string[],
-    password_confirmation?: string[],
-    post_code?: string[],
-    address?: string[],
-    building?: string[],
-    image?: string[],
-}
 
 const Register: React.FC = () => {
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [passwordConfirmed, setPasswordConfirmed] = useState<string>('');
-    const [errors, setErrors] = useState<Error>({
+    const [errors, setErrors] = useState<UserInformationError>({
         name: [],
         email: [],
         password: [],
         password_confirmation: [],
     });
 
-    const location = useLocation();
-    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
-
-    // ヘッダーの切り替え
-    useEffect(() => {
-        dispatch(fetchAuth(location.pathname));
-    }, [location.pathname]);
-
-    const resetInput = (): void => {
-        setName('');
-        setEmail('');
-        setPassword('');
-        setPasswordConfirmed('');
-        setErrors({
-            name: [],
-            email: [],
-            password: [],
-            password_confirmation: [],
-        });
-    };
 
     const register = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
@@ -71,8 +38,11 @@ const Register: React.FC = () => {
             http.get('/sanctum/csrf-cookie').then(() => {
                 http.post('/api/register', data).then((res) => {
                     if (res.status === HTTP_CREATED) {
-                        resetInput();
-                        navigate("/email-verify", { state: {type: 'success', text: 'ユーザー登録が完了しました'}, replace: true });
+                        http.get('/api/user').then(() => {
+                            navigate("/email-verify", { state: {type: 'success', text: 'ユーザー登録が完了しました'}, replace: true });
+                        }).catch(() => {
+                            alert('ユーザー登録は完了しましたが、ログインに失敗しました');
+                        });
                     }
                 }).catch((e) => {
                     if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
