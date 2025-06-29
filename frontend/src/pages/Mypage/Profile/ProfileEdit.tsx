@@ -7,7 +7,7 @@ import type { AppDispatch } from "../../../store/store";
 import { StyledContent, StyledImage, StyledImageCircle, StyledNoImage, StyledImageLabel, StyledFormDiv } from "./StyledProfile";
 import Input from "../../../components/Input/Input";
 import Button from "../../../components/Button/Button";
-import type { UserInformationError } from "../../../types/formError";
+import type { UserInformationError } from "../../../types/stateType";
 
 
 const HTTP_OK = 200;
@@ -88,10 +88,16 @@ const ProfileEdit: React.FC = () => {
         const file = files[0];
         const isFileType = !["image/jpeg", "image/png"].includes(file.type);
 
+        setFileTypeError('');
         if (isFileType) {
             setFileTypeError('ファイル形式は、jpeg, png のみ添付可能です。');
             return;
         };
+
+        if (file.size > 1 * 1024 * 1024) {
+            setFileTypeError('ファイルサイズは 1MB 以下にしてください。');
+            return;
+        }
 
         setNewImage(file);
         setPreview(URL.createObjectURL(file));

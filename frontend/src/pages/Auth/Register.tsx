@@ -5,7 +5,7 @@ import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import Link from "../../components/Link/Link";
 import { StyledContent, StyledFormDiv, StyledLink } from "./StyledRegister";
-import type { UserInformationError } from "../../types/formError";
+import type { UserInformationError } from "../../types/stateType";
 
 const HTTP_CREATED = 201;
 const HTTP_UNPROCESSABLE_ENTITY = 422;

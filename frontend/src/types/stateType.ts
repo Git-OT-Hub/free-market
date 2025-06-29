@@ -7,14 +7,20 @@ export type UserInformationError = {
     address?: string[],
     building?: string[],
     image?: string[],
+    brand?: string[],
+    price?: string[],
+    category_id?: string[],
+    state?: string[],
+    description?: string[],
 }
 
-export type ItemError = {
-    image?: string[],
-    category_id?: string[],
-    condition?: string[],
-    name?: string[],
-    brand?: string[],
-    description?: string[],
-    price?: string[],
+export type Category = {
+    id: number,
+    content: string,
+    checked: boolean,
+}
+
+export type State = {
+    value: number,
+    label: string,
 }

@@ -41,7 +41,7 @@ export const StyledAnotherImg = memo(styled.div`
 
 export const StyledSearch = memo(styled.div`
     flex: 2;
-    margin: 0 40px;
+    margin: 0 36px;
 
     input {
         display: block;

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Auth\RegisteredUserController;
 use App\Http\Controllers\API\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\API\ProfileController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\ItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +29,12 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
 
     Route::middleware(['verified'])->group(function() {
+        // プロフィール
         Route::get('/profile', [ProfileController::class, 'getProfile']);
         Route::post('/profile/update', [ProfileController::class, 'update']);
+        // カテゴリー取得
+        Route::get('/categories', [CategoryController::class, 'getCategories']);
+        // 商品
+        Route::post('/items', [ItemController::class, 'store']);
     });
 });

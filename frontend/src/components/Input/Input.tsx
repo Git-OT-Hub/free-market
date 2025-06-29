@@ -1,17 +1,18 @@
 import { memo } from "react";
 import { StyledInput } from "./StyledInput";
-import type { Error } from "../../pages/Auth/Register";
+import type { UserInformationError } from "../../types/stateType";
 
 type InputProps = {
     label: string,
-    errorKey: "name" | "email" | "password" | "password_confirmation" | "post_code" | "address" | "building",
-    errors: Error,
+    errorKey: "name" | "email" | "password" | "password_confirmation" | "post_code" | "address" | "building" | "brand" | "price",
+    errors: UserInformationError,
     type: string,
     value: string,
-    fn: (e: React.ChangeEvent<HTMLInputElement>) => void
+    fn: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    placeholder?: string,
 };
 
-const Input: React.FC<InputProps> = ({label, errorKey, errors, type, value, fn}) => {
+const Input: React.FC<InputProps> = ({label, errorKey, errors, type, value, fn, placeholder}) => {
     const errorMessages = errors[errorKey] || [];
 
     return (
@@ -29,6 +30,7 @@ const Input: React.FC<InputProps> = ({label, errorKey, errors, type, value, fn})
                     type={type}
                     value={value}
                     onChange={fn}
+                    placeholder={placeholder}
                 />
             </label>
         </StyledInput>

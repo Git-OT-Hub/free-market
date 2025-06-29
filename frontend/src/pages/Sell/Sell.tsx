@@ -4,83 +4,64 @@ import { useDispatch } from "react-redux";
 import http, { httpMultipart } from "../../lib/axios";
 import { success, failure } from "../../store/reducers/flashMessage";
 import type { AppDispatch } from "../../store/store";
-import { StyledContent, StyledImage, StyledImageCircle, StyledNoImage, StyledImageLabel, StyledFormDiv } from "./StyledSell";
+import { StyledContent, StyledImage, StyledImageRectangle, StyledNoImage, StyledImageLabel, StyledImageError, StyledItemDetails, StyledCategoryLabel, StyledSelect, StyledNameAndDescription, StyledTextarea, StyledFormDiv, StyledError } from "./StyledSell";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
-import type { ItemError } from "../../types/formError"; 
+import type { UserInformationError, Category, State } from "../../types/stateType"; 
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 
 const Sell: React.FC = () => {
-    const [errors, setErrors] = useState<ItemError>({
+    const [errors, setErrors] = useState<UserInformationError>({
         image: [],
         category_id: [],
-        condition: [],
+        state: [],
         name: [],
         brand: [],
         description: [],
         price: [],
     });
 
-    // ここからスタート
-    const [name, setName] = useState<string>('');
-    const [postCode, setPostCode] = useState<string>('');
-    const [address, setAddress] = useState<string>('');
-    const [building, setBuilding] = useState<string>('');
-    
+    // 画像
     const [fileTypeError, setFileTypeError] = useState<string>('');
     const [newImage, setNewImage] = useState<File>();
     const [preview, setPreview] = useState<string>("");
     const imageErrorMessages = errors['image'] || [];
+    // カテゴリー
+    const [categories, setCategories] = useState<Category[]>([]);
+    const categoryErrorMessages = errors['category_id'] || [];
+    // 商品の状態
+    const [state, setState] = useState<string>("");
+    const [stateOptions, setStateOptions] = useState<State[]>([]);
+    const stateErrorMessages = errors['state'] || [];
+    // 商品名
+    const [name, setName] = useState<string>("");
+    // ブランド名
+    const [brand, setBrand] = useState<string>("");
+    // 商品の説明
+    const [description, setDescription] = useState<string>("");
+    const descriptionErrorMessages = errors['description'] || [];
+    // 販売価格
+    const [price, setPrice] = useState<string>("");
 
+    // よう確認!!!!!!!!!!
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
 
-    // プロフィールデータの取得
+    // カテゴリー、商品状態の取得
     useEffect(() => {
-        http.get('/api/profile').then((res) => {
-            if (res.status === HTTP_OK) {
-                if (res.data.userName) {
-                    setName(res.data.userName);
-                }
-                if (res.data.profile.post_code) {
-                    setPostCode(res.data.profile.post_code);
-                }
-                if (res.data.profile.address) {
-                    setAddress(res.data.profile.address);
-                }
-                if (res.data.profile.building) {
-                    setBuilding(res.data.profile.building);
-                }
-                if (res.data.profile.image) {
-                    setPreview(`http://localhost:80/storage/${res.data.profile.image}`);
-                }
+        http.get('/api/categories').then((res) => {
+            if (res.status === HTTP_OK && res.data.categories.length !== 0) {
+                setCategories([...res.data.categories]);
+            }
+            if (res.status === HTTP_OK && res.data.itemStates.length !== 0) {
+                setStateOptions([...res.data.itemStates]);
             }
         });
     }, []);
-
-    // フラッシュメッセージ表示
-    useEffect(() => {
-        if (location.state) {
-            const createFlashMessage = () => {
-                switch (location.state.type) {
-                    case 'success':
-                        return dispatch(success(location.state.text));
-                    case 'failure':
-                        return dispatch(failure(location.state.text));
-                    default:
-                        alert('不明なメッセージです');
-                }
-            };
-
-            createFlashMessage();
-
-            navigate(location.pathname, { replace: true });
-        }
-    }, [location.state, dispatch]);
 
     const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -92,41 +73,72 @@ const Sell: React.FC = () => {
         const file = files[0];
         const isFileType = !["image/jpeg", "image/png"].includes(file.type);
 
+        setFileTypeError('');
         if (isFileType) {
             setFileTypeError('ファイル形式は、jpeg, png のみ添付可能です。');
             return;
         };
 
+        if (file.size > 1 * 1024 * 1024) {
+            setFileTypeError('ファイルサイズは 1MB 以下にしてください。');
+            return;
+        }
+
         setNewImage(file);
         setPreview(URL.createObjectURL(file));
     };
 
-    const profileUpdate = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newCategories = categories.map((category) => {
+            const newCategory = {...category};
+            if (newCategory.id === Number(e.target.value)) {
+                newCategory.checked = !category.checked;
+            }
+
+            return newCategory;
+        });
+
+        setCategories(newCategories);
+    };
+
+    const createItem = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
+            const filteredCategories = categories.filter((category) => {
+                return category.checked === true;
+            }).map((category) => {
+                return category.id
+            });
+
             const formData = new FormData();
-            formData.append("name", name);
-            formData.append("post_code", postCode);
-            formData.append("address", address);
-            formData.append("building", building);
             if (newImage) {
                 formData.append("image", newImage);
             }
+            formData.append("category_id", JSON.stringify(filteredCategories));
+            formData.append("state", state);
+            formData.append("name", name);
+            formData.append("brand", brand);
+            formData.append("description", description);
+            formData.append("price", price);
 
             http.get('/sanctum/csrf-cookie').then(() => {
-                httpMultipart.post('/api/profile/update', formData).then((res) => {
+                httpMultipart.post('/api/items', formData).then((res) => {
                     if (res.status === HTTP_CREATED) {
+                        console.log(res);
                         setErrors({
-                            name: [],
-                            post_code: [],
-                            address: [],
-                            building: [],
                             image: [],
+                            category_id: [],
+                            state: [],
+                            name: [],
+                            brand: [],
+                            description: [],
+                            price: [],
                         });
-                        navigate(location.pathname, { state: {type: 'success', text: 'プロフィールを更新しました'}, replace: true });
+                        navigate('/', { state: {type: 'success', text: '商品を出品しました'}, replace: true });
                     }
                 }).catch((e) => {
+                    console.log(e);
                     if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
                         const responseData = {...e.response.data.errors};
                         setErrors(responseData);
@@ -134,33 +146,51 @@ const Sell: React.FC = () => {
                 });
             });
         } catch (error) {
-            alert('プロフィールの更新に失敗しました。');
+            alert('商品の出品に失敗しました。');
         }
     };
 
     return (
         <StyledContent>
-            <h1>プロフィール設定</h1>
-            <form onSubmit={profileUpdate}>
+            <h1>商品の出品</h1>
+            <form onSubmit={createItem}>
                 <StyledImage>
-                    <StyledImageCircle>
+                    <p>商品画像</p>
+                    <StyledImageRectangle>
                         {preview ? (
-                            <div>
-                                <img src={preview} alt="preview img" />
-                            </div>
+                            <img src={preview} alt="preview img" />
                         ) : (
-                            <StyledNoImage></StyledNoImage>
+                            <StyledNoImage>
+                                <StyledImageLabel
+                                    $isPreview={!preview}
+                                >
+                                    <label>
+                                        画像を選択する
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg, image/png"
+                                            onChange={handleFile}
+                                        />
+                                    </label>
+                                </StyledImageLabel>
+                            </StyledNoImage>
                         )}
-                    </StyledImageCircle>
-                    <StyledImageLabel>
-                        <label>
-                            画像を選択する
-                            <input
-                                type="file"
-                                accept="image/jpeg, image/png"
-                                onChange={handleFile}
-                            />
-                        </label>
+                    </StyledImageRectangle>
+                    {preview && (
+                        <StyledImageLabel
+                            $isPreview={!preview}
+                        >
+                            <label>
+                                画像を選択する
+                                <input
+                                    type="file"
+                                    accept="image/jpeg, image/png"
+                                    onChange={handleFile}
+                                />
+                            </label>
+                        </StyledImageLabel>
+                    )}
+                    <StyledImageError>
                         {fileTypeError && (
                             <p>{fileTypeError}</p>
                         )}
@@ -173,43 +203,121 @@ const Sell: React.FC = () => {
                                 })}
                             </ul>
                         )}
-                    </StyledImageLabel>
+                    </StyledImageError>
                 </StyledImage>
-                <Input
-                    label="ユーザー名"
-                    errorKey="name"
-                    errors={errors}
-                    type="text"
-                    value={name}
-                    fn={useCallback((e) => setName(e.target.value), [])}
-                />
-                <Input
-                    label="郵便番号"
-                    errorKey="post_code"
-                    errors={errors}
-                    type="text"
-                    value={postCode}
-                    fn={useCallback((e) => setPostCode(e.target.value), [])}
-                />
-                <Input
-                    label="住所"
-                    errorKey="address"
-                    errors={errors}
-                    type="text"
-                    value={address}
-                    fn={useCallback((e) => setAddress(e.target.value), [])}
-                />
-                <Input
-                    label="建物名"
-                    errorKey="building"
-                    errors={errors}
-                    type="text"
-                    value={building}
-                    fn={useCallback((e) => setBuilding(e.target.value), [])}
-                />
+                <StyledItemDetails>
+                    <h2>商品の詳細</h2>
+                    <h3>カテゴリー</h3>
+                    <StyledError>
+                        {categoryErrorMessages && (
+                            <ul>
+                                {categoryErrorMessages.map((err, idx) => {
+                                    return (
+                                        <li key={idx}>{err}</li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+                    </StyledError>
+                    <div>
+                        {categories.map((category) => {
+                            return (
+                                <StyledCategoryLabel
+                                    key={category.id}
+                                    $isChecked={category.checked}
+                                >
+                                    {category.content}
+                                    <input
+                                        type="checkbox"
+                                        value={category.id}
+                                        checked={category.checked}
+                                        onChange={handleCheckBox}
+                                    />
+                                </StyledCategoryLabel>
+                            );
+                        })}
+                    </div>
+                    <StyledSelect>
+                        <h3>商品の状態</h3>
+                        <StyledError>
+                            {stateErrorMessages && (
+                                <ul>
+                                    {stateErrorMessages.map((err, idx) => {
+                                        return (
+                                            <li key={idx}>{err}</li>
+                                        );
+                                    })}
+                                </ul>
+                            )}
+                        </StyledError>
+                        <select
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
+                        >
+                            <option value="">
+                                選択してください
+                            </option>
+                            {stateOptions.map((state) => {
+                                return (
+                                    <option
+                                        key={state.value}
+                                        value={state.value}
+                                    >{state.label}</option>
+                                );
+                            })}
+                        </select>
+                    </StyledSelect>
+                </StyledItemDetails>
+                <StyledNameAndDescription>
+                    <h2>商品名と説明</h2>
+                    <Input
+                        label="商品名"
+                        errorKey="name"
+                        errors={errors}
+                        type="text"
+                        value={name}
+                        fn={useCallback((e) => setName(e.target.value), [])}
+                    />
+                    <Input
+                        label="ブランド名"
+                        errorKey="brand"
+                        errors={errors}
+                        type="text"
+                        value={brand}
+                        fn={useCallback((e) => setBrand(e.target.value), [])}
+                    />
+                    <StyledTextarea>
+                        <p>商品の説明</p>
+                        <StyledError>
+                            {descriptionErrorMessages && (
+                                <ul>
+                                    {descriptionErrorMessages.map((err, idx) => {
+                                        return (
+                                            <li key={idx}>{err}</li>
+                                        );
+                                    })}
+                                </ul>
+                            )}
+                        </StyledError>
+                        <textarea
+                            rows={6}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </StyledTextarea>
+                    <Input
+                        label="販売価格"
+                        errorKey="price"
+                        errors={errors}
+                        type="text"
+                        value={price}
+                        fn={useCallback((e) => setPrice(e.target.value), [])}
+                        placeholder="¥"
+                    />
+                </StyledNameAndDescription>
                 <StyledFormDiv>
                     <Button
-                        label="更新する"
+                        label="出品する"
                     />
                 </StyledFormDiv>
             </form>
