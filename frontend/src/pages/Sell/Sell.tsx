@@ -1,13 +1,10 @@
 import { useEffect, useCallback, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import http, { httpMultipart } from "../../lib/axios";
-import { success, failure } from "../../store/reducers/flashMessage";
-import type { AppDispatch } from "../../store/store";
 import { StyledContent, StyledImage, StyledImageRectangle, StyledNoImage, StyledImageLabel, StyledImageError, StyledItemDetails, StyledCategoryLabel, StyledSelect, StyledNameAndDescription, StyledTextarea, StyledFormDiv, StyledError } from "./StyledSell";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
-import type { UserInformationError, Category, State } from "../../types/stateType"; 
+import type { UserInformationError, Category, State } from "../../types/stateType";
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
@@ -46,10 +43,7 @@ const Sell: React.FC = () => {
     // 販売価格
     const [price, setPrice] = useState<string>("");
 
-    // よう確認!!!!!!!!!!
-    const location = useLocation();
     const navigate = useNavigate();
-    const dispatch: AppDispatch = useDispatch();
 
     // カテゴリー、商品状態の取得
     useEffect(() => {

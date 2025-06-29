@@ -21,6 +21,8 @@ use App\Http\Controllers\API\ItemController;
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+// 商品
+Route::get('/items', [ItemController::class, 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/user', function (Request $request) {

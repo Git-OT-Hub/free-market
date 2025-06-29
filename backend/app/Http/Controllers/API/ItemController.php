@@ -49,4 +49,43 @@ class ItemController extends Controller
 
         return response()->json("", Response::HTTP_CREATED);
     }
+
+    public function index()
+    {
+        if (Auth::user()) {
+            $filteredItems = Item::where('user_id', '!=', Auth::id())->get();
+
+            $responseFilteredItems = $filteredItems->map(function($filteredItem) {
+                return [
+                    "id" => $filteredItem->id,
+                    "name" => $filteredItem->name,
+                    "image" => $filteredItem->image,
+                    "sold_at" => $filteredItem->sold_at,
+                ];
+            });
+
+            $response = [
+                "items" => $responseFilteredItems,
+            ];
+
+            return response()->json($response, Response::HTTP_OK);
+        } else {
+            $items = Item::all();
+
+            $responseItems = $items->map(function($item) {
+                return [
+                    "id" => $item->id,
+                    "name" => $item->name,
+                    "image" => $item->image,
+                    "sold_at" => $item->sold_at,
+                ];
+            });
+
+            $response = [
+                "items" => $responseItems,
+            ];
+
+            return response()->json($response, Response::HTTP_OK);
+        }
+    }
 }

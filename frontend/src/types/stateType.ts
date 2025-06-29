@@ -24,3 +24,10 @@ export type State = {
     value: number,
     label: string,
 }
+
+export type Item = {
+    id: number,
+    name: string,
+    image: string,
+    sold_at: string,
+}

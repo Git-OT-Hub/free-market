@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import type { RootState } from "../../store/store";
 import http from "../../lib/axios";
 import Link from "../Link/Link";
@@ -40,7 +40,9 @@ const Header: React.FC = () => {
         return (
             <StyledHeader>
                 <StyledImg>
-                    <img src="/images/logo/logo.svg" alt="" />
+                    <RouterLink to="/">
+                        <img src="/images/logo/logo.svg" alt="" />
+                    </RouterLink>
                 </StyledImg>
             </StyledHeader>
         );
@@ -50,7 +52,9 @@ const Header: React.FC = () => {
         return (
             <StyledHeader>
                 <StyledAnotherImg>
-                    <img src="/images/logo/logo.svg" alt="" />
+                    <RouterLink to="/">
+                        <img src="/images/logo/logo.svg" alt="" />
+                    </RouterLink>
                 </StyledAnotherImg>
                 <StyledSearch>
                     <form>
