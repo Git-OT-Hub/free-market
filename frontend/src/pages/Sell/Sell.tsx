@@ -54,6 +54,8 @@ const Sell: React.FC = () => {
             if (res.status === HTTP_OK && res.data.itemStates.length !== 0) {
                 setStateOptions([...res.data.itemStates]);
             }
+        }).catch(() => {
+            alert('カテゴリー、商品状態の取得に失敗しました。');
         });
     }, []);
 

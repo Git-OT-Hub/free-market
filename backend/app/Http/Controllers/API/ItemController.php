@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use App\Http\Requests\ItemRequest;
 use App\Models\Item;
+use App\Enums\ItemState;
 
 class ItemController extends Controller
 {
@@ -87,5 +88,44 @@ class ItemController extends Controller
 
             return response()->json($response, Response::HTTP_OK);
         }
+    }
+
+    public function show($id)
+    {
+        $item = Item::find($id);
+
+        if (!$item) {
+            return response()->json("", Response::HTTP_NO_CONTENT);
+        }
+
+        if ($item->user_id === Auth::id()) {
+            return response()->json("", Response::HTTP_UNAUTHORIZED);
+        }
+
+        // カテゴリー取得
+        $categories = $item->categories->pluck('content')->all();
+
+        // 商品の状態を文字列へ変換
+        $state = "";
+        $itemStates = ItemState::cases();
+        foreach ($itemStates as $itemState) {
+            if ($itemState->value === $item->state) {
+                $state = $itemState->label();
+            }
+        }
+
+        $response = [
+            "id" => $item->id,
+            "name" => $item->name,
+            "brand" => $item->brand,
+            "description" => $item->description,
+            "price" => $item->price,
+            "state" => $state,
+            "image" => $item->image,
+            "sold_at" => $item->sold_at,
+            "categories" => $categories,
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
     }
 }

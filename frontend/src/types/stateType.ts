@@ -25,9 +25,21 @@ export type State = {
     label: string,
 }
 
-export type Item = {
+export type ItemType = {
     id: number,
     name: string,
     image: string,
     sold_at: string,
+}
+
+export type ItemDetailType = {
+    id: number,
+    name: string,
+    brand: string | null,
+    description: string,
+    price: number,
+    state: string,
+    image: string,
+    sold_at: string | null,
+    categories: string[],
 }

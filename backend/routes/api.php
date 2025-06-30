@@ -23,6 +23,7 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 // 商品
 Route::get('/items', [ItemController::class, 'index']);
+Route::get('/items/{id}', [ItemController::class, 'show']);
 
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/user', function (Request $request) {

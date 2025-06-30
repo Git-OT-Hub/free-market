@@ -6,7 +6,7 @@ import { success, failure } from "../../store/reducers/flashMessage";
 import type { AppDispatch } from "../../store/store";
 import Recommendation from "../../components/ItemList/Recommendation";
 import MyList from "../../components/ItemList/MyList";
-import type { Item } from "../../types/stateType";
+import type { ItemType } from "../../types/stateType";
 import { StyledHeader, StyledRecommendation, StyledMyList } from "./StyledItem";
 
 const HTTP_OK = 200;
@@ -15,7 +15,7 @@ const Item: React.FC = () => {
     const [isRecommendation, setIsRecommendation] = useState<boolean>(true);
     const [isMyList, setIsMyList] = useState<boolean>(false);
 
-    const [items, setItems] = useState<Item[]>([]);
+    const [items, setItems] = useState<ItemType[]>([]);
 
     const location = useLocation();
     const navigate = useNavigate();

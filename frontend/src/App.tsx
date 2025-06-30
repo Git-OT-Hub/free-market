@@ -11,6 +11,7 @@ import ProfileEdit from "./pages/Mypage/Profile/ProfileEdit";
 import EmailVerify from "./pages/Auth/EmailVerify";
 import Mypage from "./pages/Mypage/Mypage";
 import Sell from "./pages/Sell/Sell";
+import ItemDetail from "./pages/ItemDetail/ItemDetail";
 
 const App = () => {
 
@@ -21,6 +22,11 @@ const App = () => {
 					<Route index element={
 						<ProtectedRouteVerify>
 							<Item />
+						</ProtectedRouteVerify>
+					} />
+					<Route path="item/:id" element={
+						<ProtectedRouteVerify>
+							<ItemDetail />
 						</ProtectedRouteVerify>
 					} />
 					<Route path="register" element={

@@ -1,9 +1,9 @@
-import type { Item } from "../../types/stateType";
+import type { ItemType } from "../../types/stateType";
 import ItemParts from "../ItemParts/ItemParts";
 import { StyledContent } from "./StyledRecommendation";
 
 type RecommendationProps = {
-    items: Item[],
+    items: ItemType[],
 };
 
 const Recommendation: React.FC<RecommendationProps> = ({ items }) => {
@@ -14,6 +14,7 @@ const Recommendation: React.FC<RecommendationProps> = ({ items }) => {
                 return (
                     <ItemParts
                         key={item.id}
+                        id={item.id}
                         name={item.name}
                         image={item.image}
                         sold_at={item.sold_at}
