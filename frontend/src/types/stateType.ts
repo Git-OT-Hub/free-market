@@ -42,4 +42,6 @@ export type ItemDetailType = {
     image: string,
     sold_at: string | null,
     categories: string[],
+    is_like: boolean,
+    likes_count: number,
 }

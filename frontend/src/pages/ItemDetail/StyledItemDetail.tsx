@@ -58,7 +58,9 @@ export const StyledIcons = memo(styled.div`
 `);
 
 export const StyledStar = memo(styled.div`
-    
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 `);
 
 export const StyledBubble = memo(styled.div`

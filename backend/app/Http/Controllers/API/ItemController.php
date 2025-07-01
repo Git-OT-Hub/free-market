@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use App\Http\Requests\ItemRequest;
 use App\Models\Item;
-use App\Enums\ItemState;
 
 class ItemController extends Controller
 {
@@ -103,16 +102,13 @@ class ItemController extends Controller
         }
 
         // カテゴリー取得
-        $categories = $item->categories->pluck('content')->all();
-
+        $categories = $item->getCategories();
         // 商品の状態を文字列へ変換
-        $state = "";
-        $itemStates = ItemState::cases();
-        foreach ($itemStates as $itemState) {
-            if ($itemState->value === $item->state) {
-                $state = $itemState->label();
-            }
-        }
+        $state = $item->convertStateToString();
+        // 商品に対するいいねの有無
+        $isLike = $item->isLike();
+        // 商品に対するいいねの数
+        $likesCount = $item->likesCount();
 
         $response = [
             "id" => $item->id,
@@ -124,6 +120,96 @@ class ItemController extends Controller
             "image" => $item->image,
             "sold_at" => $item->sold_at,
             "categories" => $categories,
+            "is_like" => $isLike,
+            "likes_count" => $likesCount,
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
+    }
+
+    public function like($id)
+    {
+        if (!Auth::user()) {
+            return response()->json("", Response::HTTP_UNAUTHORIZED);
+        }
+
+        $item = Item::find($id);
+        if (!$item) {
+            return response()->json("", Response::HTTP_NO_CONTENT);
+        }
+
+        $isExists = $item->users()->where('user_id', Auth::id())->exists();
+        if ($isExists) {
+            return response()->json("", Response::HTTP_BAD_REQUEST);
+        }
+
+        $item->users()->attach(Auth::id());
+
+        // カテゴリー取得
+        $categories = $item->getCategories();
+        // 商品の状態を文字列へ変換
+        $state = $item->convertStateToString();
+        // 商品に対するいいねの有無
+        $isLike = $item->isLike();
+        // 商品に対するいいねの数
+        $likesCount = $item->likesCount();
+
+        $response = [
+            "id" => $item->id,
+            "name" => $item->name,
+            "brand" => $item->brand,
+            "description" => $item->description,
+            "price" => $item->price,
+            "state" => $state,
+            "image" => $item->image,
+            "sold_at" => $item->sold_at,
+            "categories" => $categories,
+            "is_like" => $isLike,
+            "likes_count" => $likesCount,
+        ];
+
+        return response()->json($response, Response::HTTP_CREATED);
+    }
+
+    public function unlike($id)
+    {
+        if (!Auth::user()) {
+            return response()->json("", Response::HTTP_UNAUTHORIZED);
+        }
+
+        $item = Item::find($id);
+        if (!$item) {
+            return response()->json("", Response::HTTP_NO_CONTENT);
+        }
+
+        $isExists = $item->users()->where('user_id', Auth::id())->exists();
+        if (!$isExists) {
+            return response()->json("", Response::HTTP_BAD_REQUEST);
+        }
+
+        $item->users()->detach(Auth::id());
+
+        // カテゴリー取得
+        $categories = $item->getCategories();
+        // 商品の状態を文字列へ変換
+        $state = $item->convertStateToString();
+        // 商品に対するいいねの有無
+        $isLike = $item->isLike();
+        // 商品に対するいいねの数
+        $likesCount = $item->likesCount();
+
+        $response = [
+            "id" => $item->id,
+            "name" => $item->name,
+            "brand" => $item->brand,
+            "description" => $item->description,
+            "price" => $item->price,
+            "state" => $state,
+            "image" => $item->image,
+            "sold_at" => $item->sold_at,
+            "categories" => $categories,
+            "is_like" => $isLike,
+            "likes_count" => $likesCount,
         ];
 
         return response()->json($response, Response::HTTP_OK);

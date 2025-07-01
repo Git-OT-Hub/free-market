@@ -39,5 +39,8 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::get('/categories', [CategoryController::class, 'getCategories']);
         // 商品
         Route::post('/items', [ItemController::class, 'store']);
+        // いいね
+        Route::post('/items/{id}/like', [ItemController::class, 'like']);
+        Route::delete('/items/{id}/like', [ItemController::class, 'unlike']);
     });
 });

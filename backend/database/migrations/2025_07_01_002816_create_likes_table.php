@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_items', function (Blueprint $table) {
+        Schema::create('likes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')
+            $table->foreignId('user_id')
                 ->constrained()
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
@@ -23,7 +23,7 @@ return new class extends Migration
                 ->onUpdate('cascade');
             $table->timestamps();
 
-            $table->unique(['category_id', 'item_id']);
+            $table->unique(['user_id', 'item_id']);
         });
     }
 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('category_items');
+        Schema::dropIfExists('likes');
     }
 };
