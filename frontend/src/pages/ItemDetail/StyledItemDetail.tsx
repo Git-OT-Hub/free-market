@@ -64,7 +64,9 @@ export const StyledStar = memo(styled.div`
 `);
 
 export const StyledBubble = memo(styled.div`
-    
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 `);
 
 export const StyledButLink = memo(styled(Link)`
@@ -130,3 +132,86 @@ export const StyledTd = memo(styled.td`
     gap: 8px;
 `);
 
+export const StyledCommentContent = memo(styled.div`
+    margin-top: 40px;
+
+    h2 {
+        color: #5f5f5f;
+        margin: 0;
+    }
+`);
+
+export const StyledCommentArea = memo(styled.div`
+    max-height: 400px;
+    overflow: auto;
+    padding-right: 8px;
+`);
+
+export const StyledCommentInfo = memo(styled.div`
+    margin-bottom: 36px;
+`);
+
+export const StyledCommentUser = memo(styled.div`
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+
+    img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+    }
+
+    div {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #d9d9d9;
+    }
+
+    span {
+        font-weight: bold;
+    }
+`);
+
+export const StyledComment = memo(styled.div`
+    background-color: #d9d9d9;
+    padding: 12px 8px;
+    border-radius: 4px;
+
+    p {
+        white-space: pre-line;
+        margin: 0;
+    }
+`);
+
+export const StyledCommentForm = memo(styled.div`
+    margin-top: 40px;
+
+    form {
+        h3 {
+            margin: 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+        }
+    }
+`);
+
+export const StyledCommentError = memo(styled.div`
+    margin-bottom: 4px;
+
+    ul {
+        margin: 0;
+
+        li {
+            color: #fb5555;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+`);

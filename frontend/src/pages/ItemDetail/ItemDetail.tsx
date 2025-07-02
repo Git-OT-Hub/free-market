@@ -6,8 +6,9 @@ import { ImStarEmpty, ImStarFull, ImBubble2 } from "react-icons/im";
 import http from "../../lib/axios";
 import { success, failure } from "../../store/reducers/flashMessage";
 import type { AppDispatch } from "../../store/store";
-import type { ItemDetailType } from "../../types/stateType";
-import { StyledContent, StyledImage, StyledDetail, StyledName, StyledBrand, StyledPrice, StyledIcons, StyledStar, StyledBubble, StyledButLink, StyledDescription, StyledInformation, StyledTd } from "./StyledItemDetail";
+import type { ItemDetailType, CommentType, CommentErrorType } from "../../types/stateType";
+import Button from "../../components/Button/Button";
+import { StyledContent, StyledImage, StyledDetail, StyledName, StyledBrand, StyledPrice, StyledIcons, StyledStar, StyledBubble, StyledButLink, StyledDescription, StyledInformation, StyledTd, StyledCommentContent, StyledCommentArea, StyledCommentInfo, StyledCommentUser, StyledComment, StyledCommentForm, StyledCommentError } from "./StyledItemDetail";
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
@@ -18,6 +19,11 @@ const HTTP_UNAUTHORIZED = 401;
 const ItemDetail: React.FC = () => {
     const { id } = useParams();
     const [itemDetail, setItemDetail] = useState<ItemDetailType>();
+    const [errors, setErrors] = useState<CommentErrorType>({
+        comment: [],
+    });
+    const [comment, setComment] = useState<string>("");
+    const commentErrorMessages = errors['comment'] || [];
     const imageUrl = "http://localhost:80/storage/";
 
     const location = useLocation();
@@ -121,6 +127,12 @@ const ItemDetail: React.FC = () => {
         }
     };
 
+    const createComment = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        console.log('create comment!');
+    };
+
     return (
         <StyledContent>
             <StyledImage>
@@ -163,6 +175,7 @@ const ItemDetail: React.FC = () => {
                     <StyledBubble>
                         <IconContext.Provider value={{ style: { fontSize: '1.5rem' } }}>
                             <ImBubble2 />
+                            <span>{itemDetail?.comments_count}</span>
                         </IconContext.Provider>
                     </StyledBubble>
                 </StyledIcons>
@@ -198,6 +211,54 @@ const ItemDetail: React.FC = () => {
                         </tbody>
                     </table>
                 </StyledInformation>
+                <StyledCommentContent>
+                    <h2>コメント({itemDetail?.comments_count})</h2>
+                    <StyledCommentArea>
+                        {itemDetail?.comments.map((comment: CommentType) => {
+                            return (
+                                <StyledCommentInfo
+                                    key={comment.comment_id}
+                                >
+                                    <StyledCommentUser>
+                                        {comment.user_img ? (
+                                            <img src={imageUrl + comment.user_img} alt="user icon" />
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                        <span>{comment.user_name}</span>
+                                    </StyledCommentUser>
+                                    <StyledComment>
+                                        <p>{comment.comment}</p>
+                                    </StyledComment>
+                                </StyledCommentInfo>
+                            );
+                        })}
+                    </StyledCommentArea>
+                    <StyledCommentForm>
+                        <form onSubmit={createComment}>
+                            <h3>商品へのコメント</h3>
+                            <StyledCommentError>
+                                {commentErrorMessages && (
+                                    <ul>
+                                        {commentErrorMessages.map((err, idx) => {
+                                            return (
+                                                <li key={idx}>{err}</li>
+                                            );
+                                        })}
+                                    </ul>
+                                )}
+                            </StyledCommentError>
+                            <textarea
+                                rows={8}
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                            <Button
+                                label="コメントを送信する"
+                            />
+                        </form>
+                    </StyledCommentForm>
+                </StyledCommentContent>
             </StyledDetail>
         </StyledContent>
     );

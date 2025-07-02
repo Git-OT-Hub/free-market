@@ -109,6 +109,10 @@ class ItemController extends Controller
         $isLike = $item->isLike();
         // 商品に対するいいねの数
         $likesCount = $item->likesCount();
+        // 商品に対するコメント情報
+        $comments = $item->getComments();
+        // 商品に対するコメント数
+        $commentsCount = $item->commentsCount();
 
         $response = [
             "id" => $item->id,
@@ -122,6 +126,8 @@ class ItemController extends Controller
             "categories" => $categories,
             "is_like" => $isLike,
             "likes_count" => $likesCount,
+            "comments" => $comments,
+            "comments_count" => $commentsCount,
         ];
 
         return response()->json($response, Response::HTTP_OK);

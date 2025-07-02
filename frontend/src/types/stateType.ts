@@ -32,6 +32,13 @@ export type ItemType = {
     sold_at: string,
 }
 
+export type CommentType = {
+    user_name: string,
+    user_img: string,
+    comment: string,
+    comment_id: number,
+}
+
 export type ItemDetailType = {
     id: number,
     name: string,
@@ -44,4 +51,10 @@ export type ItemDetailType = {
     categories: string[],
     is_like: boolean,
     likes_count: number,
+    comments: CommentType[],
+    comments_count: number,
+}
+
+export type CommentErrorType = {
+    comment?: string[],
 }
