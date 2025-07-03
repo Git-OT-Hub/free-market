@@ -42,5 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         // いいね
         Route::post('/items/{id}/like', [ItemController::class, 'like']);
         Route::delete('/items/{id}/like', [ItemController::class, 'unlike']);
+        // コメント
+        Route::post('/items/{id}/comment', [ItemController::class, 'createComment']);
     });
 });

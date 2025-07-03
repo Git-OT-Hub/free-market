@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use App\Http\Requests\ItemRequest;
+use App\Http\Requests\CommentRequest;
 use App\Models\Item;
 
 class ItemController extends Controller
@@ -159,6 +160,10 @@ class ItemController extends Controller
         $isLike = $item->isLike();
         // 商品に対するいいねの数
         $likesCount = $item->likesCount();
+        // 商品に対するコメント情報
+        $comments = $item->getComments();
+        // 商品に対するコメント数
+        $commentsCount = $item->commentsCount();
 
         $response = [
             "id" => $item->id,
@@ -172,6 +177,8 @@ class ItemController extends Controller
             "categories" => $categories,
             "is_like" => $isLike,
             "likes_count" => $likesCount,
+            "comments" => $comments,
+            "comments_count" => $commentsCount,
         ];
 
         return response()->json($response, Response::HTTP_CREATED);
@@ -203,6 +210,10 @@ class ItemController extends Controller
         $isLike = $item->isLike();
         // 商品に対するいいねの数
         $likesCount = $item->likesCount();
+        // 商品に対するコメント情報
+        $comments = $item->getComments();
+        // 商品に対するコメント数
+        $commentsCount = $item->commentsCount();
 
         $response = [
             "id" => $item->id,
@@ -216,8 +227,55 @@ class ItemController extends Controller
             "categories" => $categories,
             "is_like" => $isLike,
             "likes_count" => $likesCount,
+            "comments" => $comments,
+            "comments_count" => $commentsCount,
         ];
 
         return response()->json($response, Response::HTTP_OK);
+    }
+
+    public function createComment(CommentRequest $request, $id)
+    {
+        if (!Auth::user()) {
+            return response()->json("", Response::HTTP_UNAUTHORIZED);
+        }
+
+        $item = Item::find($id);
+        if (!$item) {
+            return response()->json("", Response::HTTP_NO_CONTENT);
+        }
+
+        $item->commentedUsers()->attach(Auth::id(), ["comment" => $request->comment]);
+
+        // カテゴリー取得
+        $categories = $item->getCategories();
+        // 商品の状態を文字列へ変換
+        $state = $item->convertStateToString();
+        // 商品に対するいいねの有無
+        $isLike = $item->isLike();
+        // 商品に対するいいねの数
+        $likesCount = $item->likesCount();
+        // 商品に対するコメント情報
+        $comments = $item->getComments();
+        // 商品に対するコメント数
+        $commentsCount = $item->commentsCount();
+
+        $response = [
+            "id" => $item->id,
+            "name" => $item->name,
+            "brand" => $item->brand,
+            "description" => $item->description,
+            "price" => $item->price,
+            "state" => $state,
+            "image" => $item->image,
+            "sold_at" => $item->sold_at,
+            "categories" => $categories,
+            "is_like" => $isLike,
+            "likes_count" => $likesCount,
+            "comments" => $comments,
+            "comments_count" => $commentsCount,
+        ];
+
+        return response()->json($response, Response::HTTP_CREATED);
     }
 }

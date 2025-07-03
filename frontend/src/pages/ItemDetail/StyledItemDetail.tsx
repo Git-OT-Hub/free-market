@@ -198,6 +198,7 @@ export const StyledCommentForm = memo(styled.div`
             width: 100%;
             padding: 8px;
             margin-bottom: 16px;
+            font-size: 16px;
         }
     }
 `);

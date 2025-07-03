@@ -15,6 +15,7 @@ const HTTP_CREATED = 201;
 const HTTP_NO_CONTENT = 204;
 const HTTP_BAD_REQUEST = 400;
 const HTTP_UNAUTHORIZED = 401;
+const HTTP_UNPROCESSABLE_ENTITY = 422;
 
 const ItemDetail: React.FC = () => {
     const { id } = useParams();
@@ -130,7 +131,40 @@ const ItemDetail: React.FC = () => {
     const createComment = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log('create comment!');
+        try {
+            const data = {
+                comment: comment,
+            };
+
+            http.get('/sanctum/csrf-cookie').then(() => {
+                http.post(`/api/items/${id}/comment`, data).then((res) => {
+                    if (res.status === HTTP_NO_CONTENT) {
+                        navigate(location.pathname, { state: {type: 'failure', text: '対象のコンテンツがありません'}, replace: true });
+                    }
+
+                    if (res.status === HTTP_CREATED) {
+                        setErrors({
+                            comment: [],
+                        });
+                        setComment("");
+                        setItemDetail({...res.data});
+
+                        navigate(location.pathname, { state: {type: 'success', text: 'コメントを送信しました'}, replace: true });
+                    }
+                }).catch((e) => {
+                    if (e.response.status === HTTP_UNAUTHORIZED) {
+                        navigate(location.pathname, { state: {type: 'failure', text: 'ログインが必要です'}, replace: true });
+                    }
+
+                    if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
+                        const responseData = {...e.response.data.errors};
+                        setErrors(responseData);
+                    }
+                });
+            });
+        } catch (error) {
+            alert('コメントの送信に失敗しました。');
+        }
     };
 
     return (
@@ -180,7 +214,7 @@ const ItemDetail: React.FC = () => {
                     </StyledBubble>
                 </StyledIcons>
                 <StyledButLink
-                    to=""
+                    to={`/purchase/${id}`}
                 >
                     購入手続きへ
                 </StyledButLink>

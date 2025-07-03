@@ -12,6 +12,7 @@ import EmailVerify from "./pages/Auth/EmailVerify";
 import Mypage from "./pages/Mypage/Mypage";
 import Sell from "./pages/Sell/Sell";
 import ItemDetail from "./pages/ItemDetail/ItemDetail";
+import Purchase from "./pages/Purchase/Purchase";
 
 const App = () => {
 
@@ -28,6 +29,11 @@ const App = () => {
 						<ProtectedRouteVerify>
 							<ItemDetail />
 						</ProtectedRouteVerify>
+					} />
+					<Route path="purchase/:id" element={
+						<ProtectedRoute>
+							<Purchase />
+						</ProtectedRoute>
 					} />
 					<Route path="register" element={
 						<ProtectedRouteNoAuth>
