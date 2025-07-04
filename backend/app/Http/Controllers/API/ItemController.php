@@ -65,8 +65,18 @@ class ItemController extends Controller
                 ];
             });
 
+            $myList = Auth::user()->likes->map(function($filteredLike) {
+                return [
+                    "id" => $filteredLike->id,
+                    "name" => $filteredLike->name,
+                    "image" => $filteredLike->image,
+                    "sold_at" => $filteredLike->sold_at,
+                ];
+            });
+
             $response = [
                 "items" => $responseFilteredItems,
+                "my_list" => $myList,
             ];
 
             return response()->json($response, Response::HTTP_OK);
@@ -84,6 +94,7 @@ class ItemController extends Controller
 
             $response = [
                 "items" => $responseItems,
+                "my_list" => [],
             ];
 
             return response()->json($response, Response::HTTP_OK);

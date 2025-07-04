@@ -16,6 +16,7 @@ const Item: React.FC = () => {
     const [isMyList, setIsMyList] = useState<boolean>(false);
 
     const [items, setItems] = useState<ItemType[]>([]);
+    const [myList, setMyList] = useState<ItemType[]>([]);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ const Item: React.FC = () => {
         http.get('/api/items').then((res) => {
             if (res.status === HTTP_OK && res.data.items.length !== 0) {
                 setItems([...res.data.items]);
+                setMyList([...res.data.my_list]);
             }
         }).catch(() => {
             alert('商品一覧のデータ取得に失敗しました。');
@@ -80,8 +82,8 @@ const Item: React.FC = () => {
                     >マイリスト</span>
                 </StyledMyList>
             </StyledHeader>
-            {isRecommendation && <Recommendation items={items}/>}
-            {isMyList && <MyList />}
+            {isRecommendation && <Recommendation items={items} />}
+            {isMyList && <MyList myList={myList} />}
         </div>
     );
 };
