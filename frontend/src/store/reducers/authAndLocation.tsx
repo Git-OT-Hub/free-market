@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import http from "../../lib/axios";
 
 export const fetchAuth = createAsyncThunk("auth/fetch", async (payload: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
     try {
         const res = await http.get("/api/user");

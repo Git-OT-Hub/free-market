@@ -13,6 +13,7 @@ import Mypage from "./pages/Mypage/Mypage";
 import Sell from "./pages/Sell/Sell";
 import ItemDetail from "./pages/ItemDetail/ItemDetail";
 import Purchase from "./pages/Purchase/Purchase";
+import ShippingAddressEdit from "./pages/ShippingAddress/ShippingAddressEdit";
 
 const App = () => {
 
@@ -33,6 +34,11 @@ const App = () => {
 					<Route path="purchase/:id" element={
 						<ProtectedRoute>
 							<Purchase />
+						</ProtectedRoute>
+					} />
+					<Route path="purchase/address/:id" element={
+						<ProtectedRoute>
+							<ShippingAddressEdit />
 						</ProtectedRoute>
 					} />
 					<Route path="register" element={

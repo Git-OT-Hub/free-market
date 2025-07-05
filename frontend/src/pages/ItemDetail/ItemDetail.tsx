@@ -50,7 +50,6 @@ const ItemDetail: React.FC = () => {
             alert('商品の詳細情報取得に失敗しました。');
         });
     }, []);
-    console.log(itemDetail);
 
     // フラッシュメッセージ表示
     useEffect(() => {
@@ -213,11 +212,19 @@ const ItemDetail: React.FC = () => {
                         </IconContext.Provider>
                     </StyledBubble>
                 </StyledIcons>
-                <StyledButLink
-                    to={`/purchase/${id}`}
-                >
-                    購入手続きへ
-                </StyledButLink>
+                {itemDetail?.sold_at ? (
+                    <StyledButLink
+                        to=""
+                    >
+                        売り切れ
+                    </StyledButLink>
+                ) : (
+                    <StyledButLink
+                        to={`/purchase/${id}`}
+                    >
+                        購入手続きへ
+                    </StyledButLink>
+                )}
                 <StyledDescription>
                     <h2>商品説明</h2>
                     <p>{itemDetail?.description}</p>

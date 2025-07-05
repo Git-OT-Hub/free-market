@@ -58,3 +58,30 @@ export type ItemDetailType = {
 export type CommentErrorType = {
     comment?: string[],
 }
+
+export type PaymentMethodType = {
+    value: number,
+    label: string,
+}
+
+export type  ShippingAddressType = {
+    post_code: string,
+    address: string,
+    building: string,
+}
+
+export type PurchaseInfoType = {
+    id: number,
+    name: string,
+    price: number,
+    image: string,
+    payment_methods: PaymentMethodType[],
+    shipping_address: ShippingAddressType,
+}
+
+export type PurchaseErrorType = {
+    payment_method?: string[],
+    post_code?: string[],
+    address?: string[],
+    building?: string[],
+}

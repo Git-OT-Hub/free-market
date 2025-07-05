@@ -57,4 +57,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Item::class, 'comments', 'user_id', 'item_id')->withPivot('id', 'item_id', 'comment')->withTimestamps()->orderByPivot('created_at', 'desc');
     }
+
+    public function getShippingAddress()
+    {
+        $profile = $this->profile;
+
+        return [
+            "post_code" => $profile->post_code,
+            "address" => $profile->address,
+            "building" => $profile->building,
+        ];
+    }
 }

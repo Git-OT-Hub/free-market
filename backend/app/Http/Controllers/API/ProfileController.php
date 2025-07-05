@@ -68,4 +68,15 @@ class ProfileController extends Controller
 
         return response()->json("", Response::HTTP_CREATED);
     }
+
+    public function shippingAddressUpdate(ProfileRequest $request)
+    {
+        Auth::user()->profile()->update([
+            "post_code" => $request->post_code,
+            "address" => $request->address,
+            "building" => $request->building,
+        ]);
+
+        return response()->json("", Response::HTTP_CREATED);
+    }
 }
