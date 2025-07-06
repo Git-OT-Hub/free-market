@@ -1,6 +1,7 @@
 import { useLayoutEffect, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { loadStripe } from "@stripe/stripe-js";
 import { success, failure } from "../../store/reducers/flashMessage";
 import http from "../../lib/axios";
 import type { AppDispatch } from "../../store/store";
@@ -9,7 +10,6 @@ import Link from "../../components/Link/Link";
 import { StyledContent, StyledPurchaseInfo, StyledPurchaseReconfirmation, StyledItemInfo, StyledItemImg, StyledItemText, StyledPurchaseMethod, StyledError, StyledShippingAddress, StyledShippingAddressHeader, StyledShippingAddressBody, StyledButton } from "./StyledPurchase";
 
 const HTTP_OK = 200;
-const HTTP_CREATED = 201;
 const HTTP_NO_CONTENT = 204;
 const HTTP_BAD_REQUEST = 400;
 const HTTP_UNAUTHORIZED = 401;
@@ -101,7 +101,7 @@ const Purchase: React.FC = () => {
         }
     }, [location.state, dispatch]);
 
-    const purchase = () => {
+    const createCheckoutSession = () => {
         try {
             const data = {
                 payment_method: paymentMethod,
@@ -111,12 +111,19 @@ const Purchase: React.FC = () => {
             };
 
             http.get('/sanctum/csrf-cookie').then(() => {
-                http.post(`/api/items/${id}/purchase`, data).then((res) => {
-                    if (res.status === HTTP_CREATED) {
-                        navigate('/', { state: {type: 'success', text: '商品を購入しました'}, replace: true });
+                http.post(`/api/items/${id}/purchase/checkout`, data).then((res) => {
+                    if (res.status === HTTP_OK) {
+                        loadStripe(res.data.publicKey).then((stripe) => {
+                            if (stripe) {
+                                stripe.redirectToCheckout({
+                                    sessionId: res.data.id,
+                                });
+                            } else {
+                                alert('Stripeの初期化に失敗しました。');
+                            }
+                        });
                     }
                 }).catch((e) => {
-                    console.log(e);
                     if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
                         const responseData = {...e.response.data.errors};
                         setErrors(responseData);
@@ -124,7 +131,7 @@ const Purchase: React.FC = () => {
                 });
             });
         } catch (error) {
-            alert('商品の購入に失敗しました。');
+            alert('決済画面への接続に失敗しました。');
         }
     };
 
@@ -237,7 +244,7 @@ const Purchase: React.FC = () => {
                     </tbody>
                 </table>
                 <StyledButton
-                    onClick={purchase}
+                    onClick={createCheckoutSession}
                 >
                     購入する
                 </StyledButton>

@@ -25,6 +25,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 // 商品
 Route::get('/items', [ItemController::class, 'index']);
 Route::get('/items/{id}', [ItemController::class, 'show']);
+// 商品購入後のデータ保存
+Route::post('/items/purchase/webhook/stripe', [PurchaseController::class, 'store']);
 
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/user', function (Request $request) {
@@ -47,7 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::post('/items/{id}/comment', [ItemController::class, 'createComment']);
         // 商品購入
         Route::get('/items/{id}/purchase/create', [PurchaseController::class, 'create']);
-        Route::post('/items/{id}/purchase', [PurchaseController::class, 'store']);
+        Route::post('/items/{id}/purchase/checkout', [PurchaseController::class, 'createCheckoutSession']);
         // 配送先住所変更
         Route::post('/profile/address/update', [ProfileController::class, 'shippingAddressUpdate']);
     });

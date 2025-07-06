@@ -63,3 +63,17 @@ services:
         ports:
             - "1025:1025"
             - "8025:8025"
+
+    stripe:
+        build: ./docker/stripe
+        container_name: stripe
+        tty: true
+        stdin_open: true
+        env_file:
+            - ./backend/.env
+        environment:
+            - STRIPE_API_KEY=${STRIPE_SECRET}
+        volumes:
+            - ./stripe:/root/.stripe
+        depends_on:
+            - backend
