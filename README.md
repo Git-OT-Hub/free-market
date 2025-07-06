@@ -96,6 +96,57 @@ php artisan migrate
 ```
 php artisan db:seed
 ```
+7. 'public/storage' から 'storage/app/public' へのシンボリックリンクを作成
+```
+php artisan storage:link
+```
+
+### stripe環境構築
+1. 下記にアクセスしてstripeのアカウントを作成
+- https://stripe.com/jp
+2. APIキーの取得
+- stripeのダッシュボードの 開発者 > APIキー から「公開可能キー」、「シークレットキー」を取得
+3. backend/.env に取得したAPIキーを登録
+- 「STRIPE_KEY=公開可能キー」、「STRIPE_SECRET=シークレットキー」
+4. docker-compose.yml と同じ階層に .env を作成し、取得したAPIキーを登録
+- 「STRIPE_KEY=公開可能キー」、「STRIPE_SECRET=シークレットキー」
+5. Docker再構築
+```
+docker compose down
+docker compose up --build -d
+```
+6. Stripe CLI に対する認証を実行
+```
+docker compose exec stripe sh
+stripe login
+表示されたURLにアクセスして認証を実施
+```
+7. Webhook署名シークレットキーの取得
+```
+docker compose exec stripe sh
+stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
+上記コマンドを実行することで、Webhook署名シークレットキー（whsec…）が表示される
+```
+8. backend/.env に取得したWebhook署名シークレットキーを登録
+- 「STRIPE_WEBHOOK_SECRET=Webhook署名シークレットキー」
+9. Docker再構築
+```
+docker compose down
+docker compose up --build -d
+```
+10. StripのWebhookイベントをモニタリングする
+```
+docker compose exec stripe sh
+stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
+※ 起動させておく。起動させておかないと、stripeの決済完了時に購入した商品情報等を登録しておく purchasesテーブルにデータが登録されなくなる。
+※ Macの場合は control + C でモニタリングを停止
+```
+11. stripeでカード決済をする場合は、テスト用のクレジットカード番号を使用
+```
+例）
+MasterCard
+5555555555554444
+```
 
 ### react環境構築
 ※ 上記でDockerをビルドした際、frontendコンテナ側で自動的に下記コマンドを実行しているため、特に構築は不要です。

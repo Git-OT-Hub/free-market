@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import type { RootState } from "../../store/store";
@@ -8,6 +9,7 @@ import { StyledHeader, StyledImg, StyledAnotherImg, StyledSearch, StyledNav, Sty
 const HTTP_NO_CONTENT = 204;
 
 const Header: React.FC = () => {
+    const [text, setText] = useState<string>("");
     const authAndLocation = useSelector((state: RootState) => state.authAndLocation);
 
     const isLogoOnlyPage = authAndLocation.location === "/login" || authAndLocation.location === "/register" || authAndLocation.location === "/email-verify";
@@ -26,6 +28,12 @@ const Header: React.FC = () => {
                 });
             });
         }
+    };
+
+    const searchItems = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        navigate(`/?search=${encodeURIComponent(text)}`);
     };
 
     if (authAndLocation.loading) {
@@ -57,10 +65,12 @@ const Header: React.FC = () => {
                     </RouterLink>
                 </StyledAnotherImg>
                 <StyledSearch>
-                    <form>
+                    <form onSubmit={searchItems}>
                         <input
                             type="text"
                             placeholder="なにをお探しですか？"
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
                         />
                     </form>
                 </StyledSearch>

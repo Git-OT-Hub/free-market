@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import http from "../../lib/axios";
@@ -22,21 +22,35 @@ const Item: React.FC = () => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
 
+    const query = new URLSearchParams(location.search);
+    const keyword = query.get('search');
+
     // 商品一覧取得
-    useEffect(() => {
+    useLayoutEffect(() => {
         http.get('/api/items').then((res) => {
             if (res.status === HTTP_OK && res.data.items.length !== 0) {
-                setItems([...res.data.items]);
-                setMyList([...res.data.my_list]);
+                const allItems = res.data.items;
+                const allMyList = res.data.my_list;
+
+                if (keyword) {
+                    const filteredItems = allItems.filter((item: ItemType) => item.name.includes(keyword));
+                    const filteredMyList = allMyList.filter((item: ItemType) => item.name.includes(keyword));
+
+                    setItems([...filteredItems]);
+                    setMyList([...filteredMyList]);
+                } else {
+                    setItems([...allItems]);
+                    setMyList([...allMyList]);
+                }
             }
         }).catch(() => {
             alert('商品一覧のデータ取得に失敗しました。');
         });
-    }, []);
+    }, [keyword]);
 
     // フラッシュメッセージ表示
     useEffect(() => {
-        if (location.state) {
+        if (location.state?.type) {
             const createFlashMessage = () => {
                 switch (location.state.type) {
                     case 'success':
