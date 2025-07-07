@@ -1,5 +1,9 @@
 # フリーマーケット
 
+## ご報告
+時間が足りず、テストコードの実装ができていない状態です。
+申し訳ございません。
+
 ## 環境構築
 ### Dockerビルド
 1. git clone git@github.com:Git-OT-Hub/free-market.git
@@ -173,6 +177,21 @@ docker compose exec frontend sh
 メールアドレス：phpMyAdmin > users テーブルにある email を使用
 パスワード：password
 ```
+
+## ER図
+[![Image from Gyazo](https://i.gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff.png)](https://gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff)
+
+## 使用技術
+### フロントエンド
+- React 19.1.0
+- TypeScript 5.8.3
+### バックエンド
+- PHP 8.2
+- Laravel 10.48.29
+### DB
+- MySQL 8.0
+### API
+- Stripe
 
 ## URL
 - 開発環境：http://localhost:5173
