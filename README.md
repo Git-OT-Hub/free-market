@@ -19,7 +19,7 @@ mysql:
 ### Laravel環境構築
 1. docker compose exec backend bash
 2. composer install
-3. backend/.env.example ファイルから .env を作成し、環境変数を設定（下記をコピーして貼り付けてください）
+3. `backend/.env.example` ファイルから `.env` を作成し、環境変数を設定（下記をコピーして貼り付けてください）
 ``` text
 APP_NAME=Laravel
 APP_ENV=local
@@ -100,7 +100,7 @@ php artisan migrate
 ```
 php artisan db:seed
 ```
-7. 'public/storage' から 'storage/app/public' へのシンボリックリンクを作成
+7. `public/storage` から `storage/app/public` へのシンボリックリンクを作成
 ```
 php artisan storage:link
 ```

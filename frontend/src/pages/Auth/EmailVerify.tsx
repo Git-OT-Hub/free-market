@@ -42,23 +42,9 @@ const EmailVerify: React.FC = () => {
         const isVerified = params.get("verified");
 
         if (isVerified === VERIFIED) {
-            dispatch(success('メール認証が完了しました。「認証はこちらから」を押して、次の画面に進んでください。'));
+            navigate("/mypage/profile", { state: {type: 'success', text: 'メール認証が完了しました'}, replace: true });
         }
     }, [location.search]);
-
-    // メール認証済みかどうかを確認
-    const verify = () => {
-        http.get('/api/user').then((res) => {
-            const user = res.data;
-            if (!user.email_verified_at) {
-                return dispatch(failure('メール認証を完了してください。'));
-            }
-
-            navigate("/mypage/profile", { replace: true });
-        }).catch(() => {
-            alert('ユーザー情報を取得できませんでした。');
-        });
-    };
 
     // 認証メールの再送
     const resendVerificationEmail = () => {
@@ -80,11 +66,11 @@ const EmailVerify: React.FC = () => {
             <p>登録していただいたメールアドレスに認証メールを送付しました。</p>
             <p>メール認証を完了してください。</p>
             <div>
-                <StyledButton
-                    onClick={verify}
-                >
-                    認証はこちらから
-                </StyledButton>
+                <a href="http://localhost:8025/">
+                    <StyledButton>
+                        認証はこちらから
+                    </StyledButton>
+                </a>
             </div>
             <div>
                 <Link

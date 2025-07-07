@@ -126,7 +126,7 @@ const ProfileEdit: React.FC = () => {
                             building: [],
                             image: [],
                         });
-                        navigate(location.pathname, { state: {type: 'success', text: 'プロフィールを更新しました'}, replace: true });
+                        navigate('/', { state: {type: 'success', text: 'プロフィールを更新しました'}, replace: true });
                     }
                 }).catch((e) => {
                     if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {
