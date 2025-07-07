@@ -79,4 +79,21 @@ class ProfileController extends Controller
 
         return response()->json("", Response::HTTP_CREATED);
     }
+
+    public function getMyItems()
+    {
+        $profile = Auth::user()->profile;
+        $userName = Auth::user()->name;
+        $exhibitList = Auth::user()->exhibitList;
+        $purchaseList = Auth::user()->purchaseList;
+
+        $response = [
+            'profileImage' => $profile->image,
+            'userName' => $userName,
+            'exhibitList' => $exhibitList,
+            'purchaseList' => $purchaseList,
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
+    }
 }

@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         // プロフィール
         Route::get('/profile', [ProfileController::class, 'getProfile']);
         Route::post('/profile/update', [ProfileController::class, 'update']);
+        Route::get('/profile/my_items', [ProfileController::class, 'getMyItems']);
         // カテゴリー取得
         Route::get('/categories', [CategoryController::class, 'getCategories']);
         // 商品

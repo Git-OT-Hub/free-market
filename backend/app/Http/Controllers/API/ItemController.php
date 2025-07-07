@@ -109,10 +109,6 @@ class ItemController extends Controller
             return response()->json("", Response::HTTP_NO_CONTENT);
         }
 
-        if ($item->user_id === Auth::id()) {
-            return response()->json("", Response::HTTP_UNAUTHORIZED);
-        }
-
         // カテゴリー取得
         $categories = $item->getCategories();
         // 商品の状態を文字列へ変換

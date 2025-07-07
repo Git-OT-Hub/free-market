@@ -56,18 +56,14 @@ const Login: React.FC = () => {
 
             http.get('/sanctum/csrf-cookie').then(() => {
                 http.post('/api/login', data).then((res) => {
-                    console.log(res);
                     if (res.status === HTTP_OK) {
                         http.get('/api/user').then((res) => {
-                            console.log(res);
-
                             if (!res.data.email_verified_at) {
                                 return navigate("/email-verify", { state: {type: 'failure', text: 'メール認証を完了してください。'}, replace: true });
                             }
 
                             navigate("/", { state: {type: 'success', text: 'ログインしました'}, replace: true });
-                        }).catch((err) => {
-                            console.log(err);
+                        }).catch(() => {
                             alert('ログインに失敗しました');
                         });
                     }

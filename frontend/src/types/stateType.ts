@@ -85,3 +85,8 @@ export type PurchaseErrorType = {
     address?: string[],
     building?: string[],
 }
+
+export type MypageProfileType = {
+    image: string,
+    name: string,
+}

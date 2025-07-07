@@ -48,6 +48,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Profile::class, 'user_id');
     }
 
+    public function exhibitList()
+    {
+        return $this->hasMany(Item::class);
+    }
+
+    public function purchaseList()
+    {
+        return $this->hasManyThrough(Item::class, Purchase::class, 'user_id', 'id', 'id', 'item_id');
+    }
+
     public function likes()
     {
         return $this->belongsToMany(Item::class, 'likes', 'user_id', 'item_id')->withTimestamps();

@@ -57,7 +57,11 @@ const App = () => {
 						</ProtectedRouteAuth>
 					} />
 					<Route path="mypage">
-						<Route index element={<Mypage />} />
+						<Route index element={
+							<ProtectedRoute>
+								<Mypage />
+							</ProtectedRoute>
+						} />
 						<Route path="profile" element={
 							<ProtectedRoute>
 								<ProfileEdit />

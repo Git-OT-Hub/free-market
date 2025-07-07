@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useLocation, useNavigate, Link as RouterLink } from "react-router-dom";
 import type { RootState } from "../../store/store";
 import http from "../../lib/axios";
 import Link from "../Link/Link";
@@ -15,6 +15,7 @@ const Header: React.FC = () => {
     const isLogoOnlyPage = authAndLocation.location === "/login" || authAndLocation.location === "/register" || authAndLocation.location === "/email-verify";
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const logout = () => {
         if (confirm("ログアウトしますか？")) {
@@ -33,7 +34,8 @@ const Header: React.FC = () => {
     const searchItems = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        navigate(`/?search=${encodeURIComponent(text)}`);
+        // navigate(`/?search=${encodeURIComponent(text)}`);
+        navigate(`${location.pathname}?search=${encodeURIComponent(text)}`);
     };
 
     if (authAndLocation.loading) {

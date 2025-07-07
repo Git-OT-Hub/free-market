@@ -19,7 +19,7 @@ mysql:
 ### Laravel環境構築
 1. docker compose exec backend bash
 2. composer install
-3. .env.example ファイルから .env を作成し、環境変数を変更
+3. backend/.env.example ファイルから .env を作成し、環境変数を設定（下記をコピーして貼り付けてください）
 ``` text
 APP_NAME=Laravel
 APP_ENV=local
@@ -83,6 +83,10 @@ VITE_PUSHER_HOST="${PUSHER_HOST}"
 VITE_PUSHER_PORT="${PUSHER_PORT}"
 VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
 VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+
+STRIPE_KEY=
+STRIPE_SECRET=
+STRIPE_WEBHOOK_SECRET=
 ```
 4. アプリケーションキーの作成
 ```
@@ -103,13 +107,16 @@ php artisan storage:link
 
 ### stripe環境構築
 1. 下記にアクセスしてstripeのアカウントを作成
-- https://stripe.com/jp
+  - https://stripe.com/jp
 2. APIキーの取得
-- stripeのダッシュボードの 開発者 > APIキー から「公開可能キー」、「シークレットキー」を取得
-3. backend/.env に取得したAPIキーを登録
-- 「STRIPE_KEY=公開可能キー」、「STRIPE_SECRET=シークレットキー」
-4. docker-compose.yml と同じ階層に .env を作成し、取得したAPIキーを登録
-- 「STRIPE_KEY=公開可能キー」、「STRIPE_SECRET=シークレットキー」
+  - stripeのダッシュボードの 開発者 > APIキー から「`公開可能キー`」、「`シークレットキー`」を取得
+  - APIキーは`テスト用`を使用すること（キーの最初の方に「`_test_`」が含まれています）
+3. `backend/.env` に取得したAPIキーを登録
+  - STRIPE_KEY=公開可能キー
+  - STRIPE_SECRET=シークレットキー
+4. `docker-compose.yml` と同じ階層に `.env` を作成し、取得したAPIキーを登録
+  - STRIPE_KEY=公開可能キー
+  - STRIPE_SECRET=シークレットキー
 5. Docker再構築
 ```
 docker compose down
@@ -119,16 +126,16 @@ docker compose up --build -d
 ```
 docker compose exec stripe sh
 stripe login
-表示されたURLにアクセスして認証を実施
+ターミナル上にURLが表示されるため、そこからアクセスして認証を実施してください
 ```
 7. Webhook署名シークレットキーの取得
 ```
 docker compose exec stripe sh
 stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
-上記コマンドを実行することで、Webhook署名シークレットキー（whsec…）が表示される
+上記コマンドを実行することで、ターミナル上にWebhook署名シークレットキー（whsec・・・）が表示される
 ```
-8. backend/.env に取得したWebhook署名シークレットキーを登録
-- 「STRIPE_WEBHOOK_SECRET=Webhook署名シークレットキー」
+8. `backend/.env` に取得したWebhook署名シークレットキーを登録
+  - STRIPE_WEBHOOK_SECRET=Webhook署名シークレットキー
 9. Docker再構築
 ```
 docker compose down
@@ -138,8 +145,8 @@ docker compose up --build -d
 ```
 docker compose exec stripe sh
 stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
-※ 起動させておく。起動させておかないと、stripeの決済完了時に購入した商品情報等を登録しておく purchasesテーブルにデータが登録されなくなる。
-※ Macの場合は control + C でモニタリングを停止
+※ 起動させておく。起動させておかないと、stripeの決済完了時に購入した商品情報等が purchasesテーブル に登録されなくなる。
+※ モニタリングを停止する場合、Macだと control + C
 ```
 11. stripeでカード決済をする場合は、テスト用のクレジットカード番号を使用
 ```
@@ -157,6 +164,14 @@ npm run dev
 ※ frontendコンテナ内に入る場合は、下記コマンドを実行してください。
 ```
 docker compose exec frontend sh
+```
+
+### ログインに関して
+シーダーファイルを流すと自動でユーザーが作成されます。
+作成されたユーザーでログインする場合は、下記の通りになります。
+```
+メールアドレス：phpMyAdmin > users テーブルにある email を使用
+パスワード：password
 ```
 
 ## URL
