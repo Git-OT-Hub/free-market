@@ -159,6 +159,10 @@ stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
 STRIPE_WEBHOOK_SECRET=Webhook署名シークレットキー
 ```
 4. stripeコンテナから抜ける
+```
+control + C で stripe listen を停止（Macの場合）
+exit でコンテナから抜ける
+```
 5. Docker再構築
 ```
 (docker-compose.yml と同じ階層で実行)
@@ -192,6 +196,13 @@ npm run dev
 docker compose exec frontend sh
 ```
 
+### 認証機能の一部不具合について
+時々、ユーザー登録や別ユーザーでログインした際、エラーメッセージが表示され、うまくいかない場合がございます。
+ログアウトをした際、バックエンド側で laravel_session を削除していますが、その更新結果が
+ブラウザ側のCookieに保存している laravel_session にうまく反映されず、起きている現象だと推測しています。
+その場合は、Google Chrome であれば、検証画面を開いた状態で、ブラウザの再読み込みボタンを右クリックして「キャッシュの削除とハード再読み込み」等を
+実施していただくことで解消します。
+
 ### ログインに関して
 seederファイルを流すと自動でユーザーが作成されます。
 作成されたユーザーでログインする場合は、下記の通りになります。
@@ -203,6 +214,7 @@ seederファイルを流すと自動でユーザーが作成されます。
 password
 ```
 ※ ユーザー登録で、自分で作成してログインしても問題ございません。
+※ アプリのURLは下記の URL > 開発環境 になります。
 
 ## ER図
 [![Image from Gyazo](https://i.gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff.png)](https://gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff)
