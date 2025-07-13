@@ -4,26 +4,19 @@
 時間が足りず、テストコードの実装ができていない状態です。
 申し訳ございません。
 
-## 環境構築
-### Dockerビルド
-1. git clone git@github.com:Git-OT-Hub/free-market.git
-2. docker compose up -d --build
-
-※ MySQL, phpMyAdmin, mailhog は、OSによって起動しない場合があるため、それぞれのPCに合わせて docker-compose.yml ファイルを編集してください。
-
-> *MacのM1・M2チップのPCの場合、エラーメッセージが表示されビルドができないことがあります。
-エラーが発生する場合は、docker-compose.ymlファイルの「mysql」「phpmyadmin」「mailhog」内に「platform」の項目を追加で記載してください*
+## 環境構築(上から順番にお願いします)
+### リモートリポジトリからソースコードを取得
 ```
-例）
-mysql:
-    image: "mysql:8.0"
-    platform: linux/amd64
+git clone git@github.com:Git-OT-Hub/free-market.git
 ```
 
-### Laravel環境構築
-1. docker compose exec backend bash
-2. composer install
-3. `backend/.env.example` ファイルから `.env` を作成し、環境変数を設定（下記をコピーして貼り付けてください）
+### stripe環境構築(その1)
+1. 下記にアクセスしてstripeのアカウントを作成
+  - https://stripe.com/jp
+2. APIキーの取得
+  - stripeのダッシュボードの 開発者 > APIキー から「`公開可能キー`」、「`シークレットキー`」を取得
+  - APIキーは`テスト用`を使用すること（キーの最初の方に「`_test_`」が含まれています）
+3. `backend/.env` を作成し、環境変数を設定（下記をコピーして貼り付けてください）
 ``` text
 APP_NAME=Laravel
 APP_ENV=local
@@ -92,6 +85,43 @@ STRIPE_KEY=
 STRIPE_SECRET=
 STRIPE_WEBHOOK_SECRET=
 ```
+4. `backend/.env` に取得したAPIキーを`登録`
+```
+STRIPE_KEY=公開可能キー
+STRIPE_SECRET=シークレットキー
+```
+5. `docker-compose.yml` と同じ階層に `.env` を`作成`し、取得したAPIキー`のみを登録`
+```
+STRIPE_KEY=公開可能キー
+STRIPE_SECRET=シークレットキー
+```
+
+### Dockerビルド
+```
+docker compose up -d --build
+```
+
+※ MySQL, phpMyAdmin, mailhog は、OSによって起動しない場合があるため、それぞれのPCに合わせて docker-compose.yml ファイルを編集してください。
+
+> *MacのM1・M2チップのPCの場合、エラーメッセージが表示されビルドができないことがあります。
+エラーが発生する場合は、docker-compose.ymlファイルの「mysql」「phpmyadmin」「mailhog」内に「platform」の項目を追加で記載してください*
+```
+例）
+mysql:
+    image: "mysql:8.0"
+    platform: linux/amd64
+```
+
+### Laravel環境構築
+1. backendコンテナに入る
+```
+(docker-compose.yml と同じ階層で実行し backendコンテナに入る)
+docker compose exec backend bash
+```
+2. 依存関係のライブラリをインストール
+```
+composer install
+```
 4. アプリケーションキーの作成
 ```
 php artisan key:generate
@@ -108,51 +138,43 @@ php artisan db:seed
 ```
 php artisan storage:link
 ```
+8. backendコンテナから抜ける
 
-### stripe環境構築
-1. 下記にアクセスしてstripeのアカウントを作成
-  - https://stripe.com/jp
-2. APIキーの取得
-  - stripeのダッシュボードの 開発者 > APIキー から「`公開可能キー`」、「`シークレットキー`」を取得
-  - APIキーは`テスト用`を使用すること（キーの最初の方に「`_test_`」が含まれています）
-3. `backend/.env` に取得したAPIキーを登録
-  - STRIPE_KEY=公開可能キー
-  - STRIPE_SECRET=シークレットキー
-4. `docker-compose.yml` と同じ階層に `.env` を作成し、取得したAPIキーを登録
-  - STRIPE_KEY=公開可能キー
-  - STRIPE_SECRET=シークレットキー
-5. Docker再構築
+### stripe環境構築(その2)
+1. Stripe CLI に対する認証を実行
 ```
-docker compose down
-docker compose up --build -d
-```
-6. Stripe CLI に対する認証を実行
-```
+(docker-compose.yml と同じ階層で実行し stripeコンテナに入る)
 docker compose exec stripe sh
 stripe login
 ターミナル上にURLが表示されるため、そこからアクセスして認証を実施してください
 ```
-7. Webhook署名シークレットキーの取得
+2. Webhook署名シークレットキーの取得
 ```
-docker compose exec stripe sh
+※ stripeコンテナに入っている状態で下記コマンドを実行
 stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
-上記コマンドを実行することで、ターミナル上にWebhook署名シークレットキー（whsec・・・）が表示される
+ターミナル上にWebhook署名シークレットキー（whsec・・・）が表示される
 ```
-8. `backend/.env` に取得したWebhook署名シークレットキーを登録
-  - STRIPE_WEBHOOK_SECRET=Webhook署名シークレットキー
-9. Docker再構築
+3. `backend/.env` に取得したWebhook署名シークレットキーを登録
 ```
+STRIPE_WEBHOOK_SECRET=Webhook署名シークレットキー
+```
+4. stripeコンテナから抜ける
+5. Docker再構築
+```
+(docker-compose.yml と同じ階層で実行)
 docker compose down
 docker compose up --build -d
 ```
-10. StripのWebhookイベントをモニタリングする
+6. StripのWebhookイベントをモニタリングする
 ```
+(docker-compose.yml と同じ階層で実行し stripeコンテナに入る)
 docker compose exec stripe sh
 stripe listen --forward-to nginx:80/api/items/purchase/webhook/stripe
-※ 起動させておく。起動させておかないと、stripeの決済完了時に購入した商品情報等が purchasesテーブル に登録されなくなる。
+※ 起動させておく。
+※ stripe側で決済が完了した際、購入した商品情報等のデータが送信されてくるため、そのデータを受け取り、 purchasesテーブル にそのデータを登録するよう実装している。
 ※ モニタリングを停止する場合、Macだと control + C
 ```
-11. stripeでカード決済をする場合は、テスト用のクレジットカード番号を使用
+7. stripeでカード決済をする場合は、テスト用のクレジットカード番号を使用
 ```
 例）
 MasterCard
@@ -160,7 +182,7 @@ MasterCard
 ```
 
 ### react環境構築
-※ 上記でDockerをビルドした際、frontendコンテナ側で自動的に下記コマンドを実行しているため、特に構築は不要です。
+※ 上記でDockerをビルドした際、frontendコンテナ側で自動的に下記コマンドを実行しているため、特に`構築は不要`です。
 ```
 npm install
 npm run dev
@@ -171,12 +193,16 @@ docker compose exec frontend sh
 ```
 
 ### ログインに関して
-シーダーファイルを流すと自動でユーザーが作成されます。
+seederファイルを流すと自動でユーザーが作成されます。
 作成されたユーザーでログインする場合は、下記の通りになります。
+1. メールアドレスの取得
+  - http://localhost:8080/ にアクセスして usersテーブルにある任意の email を取得
+2. パスワードの取得
 ```
-メールアドレス：phpMyAdmin > users テーブルにある email を使用
-パスワード：password
+パスワードは下記の通りです。どのユーザーも同じパスワードです。
+password
 ```
+※ ユーザー登録で、自分で作成してログインしても問題ございません。
 
 ## ER図
 [![Image from Gyazo](https://i.gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff.png)](https://gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff)
