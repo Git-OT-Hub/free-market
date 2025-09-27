@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('post_code');
             $table->string('address');
             $table->string('building')->nullable();
+            $table->boolean('is_transaction_completed');
             $table->timestamps();
 
             $table->unique(['user_id', 'item_id']);

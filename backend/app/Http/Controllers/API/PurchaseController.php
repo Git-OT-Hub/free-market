@@ -186,6 +186,7 @@ class PurchaseController extends Controller
                         'post_code' => $metadata['post_code'],
                         'address' => $metadata['address'],
                         'building' => $metadata['building'] ?? null,
+                        'is_transaction_completed' => false,
                     ]);
                 });
             }
@@ -216,6 +217,7 @@ class PurchaseController extends Controller
                         'post_code' => $metadata['post_code'],
                         'address' => $metadata['address'],
                         'building' => $metadata['building'] ?? null,
+                        'is_transaction_completed' => false,
                     ]);
                 });
             }

@@ -36,7 +36,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 2,
+                "user_id" => 1,
                 "name" => "玉ねぎ3束",
                 "description" => "新鮮な玉ねぎ3束のセット",
                 "price" => 300,
@@ -46,7 +46,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 2,
+                "user_id" => 1,
                 "name" => "革靴",
                 "description" => "クラシックなデザインの革靴",
                 "price" => 4000,
@@ -56,7 +56,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 3,
+                "user_id" => 1,
                 "name" => "ノートPC",
                 "description" => "高性能なノートパソコン",
                 "price" => 45000,
@@ -66,7 +66,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 3,
+                "user_id" => 2,
                 "name" => "マイク",
                 "description" => "高音質のレコーディング用マイク",
                 "price" => 8000,
@@ -76,7 +76,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 4,
+                "user_id" => 2,
                 "name" => "ショルダーバッグ",
                 "description" => "おしゃれなショルダーバッグ",
                 "price" => 3500,
@@ -86,7 +86,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 4,
+                "user_id" => 2,
                 "name" => "タンブラー",
                 "description" => "使いやすいタンブラー",
                 "price" => 500,
@@ -96,7 +96,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 5,
+                "user_id" => 2,
                 "name" => "コーヒーミル",
                 "description" => "手動のコーヒーミル",
                 "price" => 4000,
@@ -106,7 +106,7 @@ class ItemsTableSeeder extends Seeder
                 "updated_at" => Carbon::now(),
             ],
             [
-                "user_id" => 5,
+                "user_id" => 2,
                 "name" => "メイクセット",
                 "description" => "便利なメイクアップセット",
                 "price" => 2500,

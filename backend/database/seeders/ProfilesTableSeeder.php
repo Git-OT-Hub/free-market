@@ -13,6 +13,6 @@ class ProfilesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Profile::factory(5)->create();
+        Profile::factory(3)->create();
     }
 }
