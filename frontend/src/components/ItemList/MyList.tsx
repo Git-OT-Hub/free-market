@@ -14,7 +14,7 @@ const MyList: React.FC<MyListProps> = ({ myList }) => {
                 return (
                     <ItemParts
                         key={item.id}
-                        id={item.id}
+                        url={`/item/${item.id}`}
                         name={item.name}
                         image={item.image}
                         sold_at={item.sold_at}

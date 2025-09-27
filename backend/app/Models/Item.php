@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ItemState;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Item extends Model
 {
@@ -26,6 +27,16 @@ class Item extends Model
         'image',
         'sold_at',
     ];
+
+    /**
+     * 商品に紐づく購入履歴を取得するリレーション
+     *
+     * @return HasOne<\App\Models\Purchase>
+     */
+    public function purchase(): HasOne
+    {
+        return $this->hasOne(Purchase::class, 'item_id');
+    }
 
     public function categories()
     {

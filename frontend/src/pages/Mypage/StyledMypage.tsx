@@ -3,11 +3,15 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 type StyledHeaderExhibitListProps = {
-    $isExhibitList: boolean,
+    $isExhibitList: boolean;
 }
 
 type StyledHeaderPurchaseListProps = {
-    $isPurchaseList: boolean,
+    $isPurchaseList: boolean;
+}
+
+type StyledHeaderTransactionListProps = {
+    $isTransactionList: boolean;
 }
 
 export const StyledHeader = memo(styled.div`
@@ -35,6 +39,16 @@ export const StyledHeaderPurchaseList = memo(styled.div<StyledHeaderPurchaseList
     span {
         cursor: pointer;
         color: ${({ $isPurchaseList }) => $isPurchaseList ? '#fb2020' : ''};
+    }
+`);
+
+export const StyledHeaderTransactionList = memo(styled.div<StyledHeaderTransactionListProps>`
+    width: 25%;
+    text-align: center;
+
+    span {
+        cursor: pointer;
+        color: ${({ $isTransactionList }) => $isTransactionList ? '#fb2020' : ''};
     }
 `);
 

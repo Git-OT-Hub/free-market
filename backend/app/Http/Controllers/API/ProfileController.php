@@ -86,12 +86,14 @@ class ProfileController extends Controller
         $userName = Auth::user()->name;
         $exhibitList = Auth::user()->exhibitList;
         $purchaseList = Auth::user()->purchaseList;
+        $transactionList = Auth::user()->transactionList();
 
         $response = [
             'profileImage' => $profile->image,
             'userName' => $userName,
             'exhibitList' => $exhibitList,
             'purchaseList' => $purchaseList,
+            'transactionList' => $transactionList,
         ];
 
         return response()->json($response, Response::HTTP_OK);

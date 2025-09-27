@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -77,5 +78,25 @@ class User extends Authenticatable implements MustVerifyEmail
             "address" => $profile->address,
             "building" => $profile->building,
         ];
+    }
+
+    public function transactionList()
+    {
+        $itemsAsSeller = Item::where('user_id', Auth::id())
+            ->whereHas('purchase', function ($query) {
+                $query->where('is_transaction_completed', false);
+            })
+            ->get();
+
+        $itemsAsBuyer = Item::whereHas('purchase', function ($query) {
+            $query->where('user_id', Auth::id())
+                ->where('is_transaction_completed', false);
+        })
+        ->get();
+
+        return $itemsAsSeller
+            ->merge($itemsAsBuyer)
+            ->unique('id')
+            ->values();
     }
 }

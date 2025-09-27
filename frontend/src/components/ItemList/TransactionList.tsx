@@ -1,16 +1,16 @@
+import { StyledContent } from "./StyledTransactionList";
 import type { ItemType } from "../../types/stateType";
 import ItemParts from "../ItemParts/ItemParts";
-import { StyledContent } from "./StyledExhibitList";
 
-type ExhibitListProps = {
-    exhibitList: ItemType[],
+type TransactionListProps = {
+    transactionList: ItemType[];
 };
 
-const ExhibitList: React.FC<ExhibitListProps> = ({ exhibitList }) => {
+const TransactionList: React.FC<TransactionListProps> = ({ transactionList }) => {
 
     return (
         <StyledContent>
-            {exhibitList.map((item) => {
+            {transactionList.map((item) => {
                 return (
                     <ItemParts
                         key={item.id}
@@ -25,4 +25,4 @@ const ExhibitList: React.FC<ExhibitListProps> = ({ exhibitList }) => {
     );
 };
 
-export default ExhibitList;
+export default TransactionList;

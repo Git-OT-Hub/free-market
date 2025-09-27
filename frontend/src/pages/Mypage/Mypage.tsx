@@ -6,24 +6,26 @@ import { success, failure } from "../../store/reducers/flashMessage";
 import type { AppDispatch } from "../../store/store";
 import ExhibitList from "../../components/ItemList/ExhibitList";
 import PurchaseList from "../../components/ItemList/PurchaseList";
+import TransactionList from "../../components/ItemList/TransactionList";
 import type { ItemType, MypageProfileType } from "../../types/stateType";
-import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink } from "./StyledMypage";
+import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink, StyledHeaderTransactionList } from "./StyledMypage";
 
 const HTTP_OK = 200;
 
 const Mypage: React.FC = () => {
     const [isExhibitList, setIsExhibitList] = useState<boolean>(true);
     const [isPurchaseList, setIsPurchaseList] = useState<boolean>(false);
+    const [isTransactionList, setIsTransactionList] = useState<boolean>(false);
 
     const [exhibitList, setExhibitList] = useState<ItemType[]>([]);
     const [purchaseList, setPurchaseList] = useState<ItemType[]>([]);
+    const [transactionList, setTransactionList] = useState<ItemType[]>([]);
 
     const [profile, setProfile] = useState<MypageProfileType>({
         image: "",
         name: "",
     });
     const imageUrl = "http://localhost:80/storage/";
-    console.log(profile);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -38,7 +40,8 @@ const Mypage: React.FC = () => {
             if (res.status === HTTP_OK) {
                 const allExhibitList = res.data.exhibitList;
                 const allPurchaseList = res.data.purchaseList;
-
+                const allTransactionList = res.data.transactionList;
+console.log(res)
                 setProfile({
                     image: res.data.profileImage,
                     name: res.data.userName,
@@ -47,12 +50,15 @@ const Mypage: React.FC = () => {
                 if (keyword) {
                     const filteredExhibitList = allExhibitList.filter((item: ItemType) => item.name.includes(keyword));
                     const filteredPurchaseList = allPurchaseList.filter((item: ItemType) => item.name.includes(keyword));
+                    const filteredTransactionList = allTransactionList.filter((item: ItemType) => item.name.includes(keyword));
 
                     setExhibitList([...filteredExhibitList]);
                     setPurchaseList([...filteredPurchaseList]);
+                    setTransactionList([...filteredTransactionList]);
                 } else {
                     setExhibitList([...allExhibitList]);
                     setPurchaseList([...allPurchaseList]);
+                    setTransactionList([...allTransactionList]);
                 }
             }
         }).catch(() => {
@@ -82,12 +88,20 @@ const Mypage: React.FC = () => {
 
     const clickedExhibitList = () => {
         setIsPurchaseList(false);
+        setIsTransactionList(false);
         setIsExhibitList(true);
     };
 
     const clickedPurchaseList = () => {
         setIsExhibitList(false);
+        setIsTransactionList(false);
         setIsPurchaseList(true);
+    };
+
+    const clickedTransactionList = () => {
+        setIsExhibitList(false);
+        setIsPurchaseList(false);
+        setIsTransactionList(true);
     };
 
     return (
@@ -130,9 +144,17 @@ const Mypage: React.FC = () => {
                         onClick={clickedPurchaseList}
                     >購入した商品</span>
                 </StyledHeaderPurchaseList>
+                <StyledHeaderTransactionList
+                    $isTransactionList={isTransactionList}
+                >
+                    <span
+                        onClick={clickedTransactionList}
+                    >取引中の商品</span>
+                </StyledHeaderTransactionList>
             </StyledHeader>
             {isExhibitList && <ExhibitList exhibitList={exhibitList} />}
             {isPurchaseList && <PurchaseList purchaseList={purchaseList} />}
+            {isTransactionList && <TransactionList transactionList={transactionList} />}
         </div>
     );
 }
