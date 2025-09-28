@@ -14,6 +14,7 @@ import Sell from "./pages/Sell/Sell";
 import ItemDetail from "./pages/ItemDetail/ItemDetail";
 import Purchase from "./pages/Purchase/Purchase";
 import ShippingAddressEdit from "./pages/ShippingAddress/ShippingAddressEdit";
+import Transaction from "./pages/Transaction/Transaction";
 
 const App = () => {
 
@@ -39,6 +40,11 @@ const App = () => {
 					<Route path="purchase/address/:id" element={
 						<ProtectedRoute>
 							<ShippingAddressEdit />
+						</ProtectedRoute>
+					} />
+					<Route path="transaction/:id" element={
+						<ProtectedRoute>
+							<Transaction />
 						</ProtectedRoute>
 					} />
 					<Route path="register" element={

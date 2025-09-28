@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ItemController;
 use App\Http\Controllers\API\PurchaseController;
+use App\Http\Controllers\API\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,5 +54,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::post('/items/{id}/purchase/checkout', [PurchaseController::class, 'createCheckoutSession']);
         // 配送先住所変更
         Route::post('/profile/address/update', [ProfileController::class, 'shippingAddressUpdate']);
+        // チャット
+        Route::post('/transaction/{id}/chat', [TransactionController::class, 'createChat']);
     });
 });

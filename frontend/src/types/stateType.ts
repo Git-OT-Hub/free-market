@@ -90,3 +90,7 @@ export type MypageProfileType = {
     image: string,
     name: string,
 }
+
+export type ValidationErrorsType = {
+    errors: Record<string, string[]>;
+}

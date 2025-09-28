@@ -14,7 +14,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactionList }) =>
                 return (
                     <ItemParts
                         key={item.id}
-                        url={`/item/${item.id}`}
+                        url={`/transaction/${item.id}`}
                         name={item.name}
                         image={item.image}
                         sold_at={item.sold_at}
