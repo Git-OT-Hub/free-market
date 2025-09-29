@@ -7,7 +7,7 @@ import type { AppDispatch } from "../../store/store";
 import ExhibitList from "../../components/ItemList/ExhibitList";
 import PurchaseList from "../../components/ItemList/PurchaseList";
 import TransactionList from "../../components/ItemList/TransactionList";
-import type { ItemType, MypageProfileType } from "../../types/stateType";
+import type { ItemType, MypageProfileType, TransactionType } from "../../types/stateType";
 import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink, StyledHeaderTransactionList } from "./StyledMypage";
 
 const HTTP_OK = 200;
@@ -19,7 +19,7 @@ const Mypage: React.FC = () => {
 
     const [exhibitList, setExhibitList] = useState<ItemType[]>([]);
     const [purchaseList, setPurchaseList] = useState<ItemType[]>([]);
-    const [transactionList, setTransactionList] = useState<ItemType[]>([]);
+    const [transactionList, setTransactionList] = useState<TransactionType[]>([]);
 
     const [profile, setProfile] = useState<MypageProfileType>({
         image: "",
@@ -41,7 +41,7 @@ const Mypage: React.FC = () => {
                 const allExhibitList = res.data.exhibitList;
                 const allPurchaseList = res.data.purchaseList;
                 const allTransactionList = res.data.transactionList;
-console.log(res)
+
                 setProfile({
                     image: res.data.profileImage,
                     name: res.data.userName,

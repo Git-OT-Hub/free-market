@@ -1,9 +1,9 @@
 import { StyledContent } from "./StyledTransactionList";
-import type { ItemType } from "../../types/stateType";
+import type { TransactionType } from "../../types/stateType";
 import ItemParts from "../ItemParts/ItemParts";
 
 type TransactionListProps = {
-    transactionList: ItemType[];
+    transactionList: TransactionType[];
 };
 
 const TransactionList: React.FC<TransactionListProps> = ({ transactionList }) => {
@@ -13,8 +13,8 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactionList }) =>
             {transactionList.map((item) => {
                 return (
                     <ItemParts
-                        key={item.id}
-                        url={`/transaction/${item.id}`}
+                        key={item.purchase.id}
+                        url={`/transaction/${item.purchase.id}`}
                         name={item.name}
                         image={item.image}
                         sold_at={item.sold_at}

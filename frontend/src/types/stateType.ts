@@ -94,3 +94,15 @@ export type MypageProfileType = {
 export type ValidationErrorsType = {
     errors: Record<string, string[]>;
 }
+
+type PurchaseType = {
+    id: number;
+}
+
+export type TransactionType = {
+    id: number;
+    name: string;
+    image: string;
+    sold_at: string;
+    purchase: PurchaseType;
+}
