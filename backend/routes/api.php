@@ -55,6 +55,6 @@ Route::middleware(['auth:sanctum'])->group(function() {
         // 配送先住所変更
         Route::post('/profile/address/update', [ProfileController::class, 'shippingAddressUpdate']);
         // チャット
-        Route::post('/transaction/{id}/chat', [TransactionController::class, 'createChat']);
+        Route::post('/transaction/chat/create', [TransactionController::class, 'createChat']);
     });
 });

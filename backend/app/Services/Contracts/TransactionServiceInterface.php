@@ -11,6 +11,7 @@ interface TransactionServiceInterface
      *
      * @param ChatRequest $request
      * @return array{
+     *   user_id: int,
      *   user_name: string,
      *   user_image: string|null,
      *   chat_id: int,

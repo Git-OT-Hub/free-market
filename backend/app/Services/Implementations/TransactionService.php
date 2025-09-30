@@ -20,6 +20,7 @@ class TransactionService implements TransactionServiceInterface
      *
      * @param ChatRequest $request
      * @return array{
+     *   user_id: int,
      *   user_name: string,
      *   user_image: string|null,
      *   chat_id: int,
@@ -29,8 +30,27 @@ class TransactionService implements TransactionServiceInterface
      */
     public function getChatContent(ChatRequest $request): array|null
     {
-        $res = $this->transactionRepository->saveChatContent($request);
+        try {
+            $res = $this->transactionRepository->saveChatContent($request);
 
-        return $res;
+            if (!$res) {
+                return null;
+            }
+
+            $user = $res['user'];
+            $chat = $res['chat'];
+            $userImage = $user->profile->image;
+
+            return [
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'user_image' => $userImage,
+                'chat_id' => $chat->id,
+                'chat_message' => $chat->message,
+                'chat_image' => $chat->image,
+            ];
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }

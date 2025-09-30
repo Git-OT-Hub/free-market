@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Enums\ItemState;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Item extends Model
 {
@@ -36,6 +37,16 @@ class Item extends Model
     public function purchase(): HasOne
     {
         return $this->hasOne(Purchase::class, 'item_id');
+    }
+
+    /**
+     * 商品に紐づくユーザーを取得するリレーション
+     *
+     * @return BelongsTo<\App\Models\User>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function categories()

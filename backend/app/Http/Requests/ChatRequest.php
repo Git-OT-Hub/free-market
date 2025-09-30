@@ -25,6 +25,7 @@ class ChatRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'purchase_id' => ['required', 'integer'],
             'message' => ['required', 'string', 'max:400'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png'],
         ];
@@ -38,6 +39,9 @@ class ChatRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'purchase_id.required' => '購入履歴IDは必須です',
+            'purchase_id.integer' => '購入履歴IDは整数で送信してください',
+
             'message.required' => '本文を入力してください',
             'message.string' => '本文を文字列で入力してください',
             'message.max' => '本文は400文字以内で入力してください',

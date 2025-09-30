@@ -6,12 +6,15 @@ import { useRef, useState } from "react";
 import { useSaveMessage } from "../../hooks/useSaveMessage";
 import { httpMultipart } from "../../lib/axios";
 import type { ValidationErrorsType } from "../../types/stateType";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store/store";
 
 const HTTP_CREATED = 201;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 
 const Transaction: React.FC = () => {
     const { id } = useParams();
+    const userId = useSelector((state: RootState) => state.authAndLocation.userId);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [fileTypeError, setFileTypeError] = useState<string>('');
     const [image, setImage] = useState<File>();
@@ -26,7 +29,7 @@ const Transaction: React.FC = () => {
     // メッセージ保持
     const transactionId = id ?? "";
     const [drafts, setDrafts] = useSaveMessage<Record<string, string>>(
-        "transactionDrafts",
+        `transactionDrafts_${userId}`,
         {}
     );
     const message = drafts[transactionId] || "";
@@ -73,12 +76,13 @@ const Transaction: React.FC = () => {
 
     const handleSubmit = () => {
         const formData = new FormData();
+        formData.append("purchase_id", transactionId);
         formData.append("message", message);
         if (image) {
             formData.append("image", image);
         }
 
-        httpMultipart.post(`/api/transaction/${id}/chat`, formData)
+        httpMultipart.post('/api/transaction/chat/create', formData)
             .then((res) => {
                 setErrors({errors: {}});
 
