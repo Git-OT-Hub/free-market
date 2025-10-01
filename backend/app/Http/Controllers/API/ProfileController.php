@@ -88,12 +88,16 @@ class ProfileController extends Controller
         $purchaseList = Auth::user()->purchaseList;
         $transactionList = Auth::user()->transactionList();
 
+        // 全取引の未読件数合計
+        $totalUnreadCount = $transactionList->sum('unread_count');
+
         $response = [
             'profileImage' => $profile->image,
             'userName' => $userName,
             'exhibitList' => $exhibitList,
             'purchaseList' => $purchaseList,
             'transactionList' => $transactionList,
+            'totalUnreadCount' => $totalUnreadCount,
         ];
 
         return response()->json($response, Response::HTTP_OK);

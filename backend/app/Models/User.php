@@ -96,9 +96,36 @@ class User extends Authenticatable implements MustVerifyEmail
             })
             ->get();
 
-        return $itemsAsSeller
+        $transactionList = $itemsAsSeller
             ->merge($itemsAsBuyer)
             ->unique('id')
             ->values();
+
+        // 各取引ごとに未読件数を追加
+        $transactionList->map(function ($item) {
+            $unreadCount = $item->purchase->chats()
+                ->whereHas('chatRead', function ($q) {
+                    $q->where('user_id', Auth::id())
+                        ->whereNull('read_at');
+                })
+                ->count();
+
+            // 相手が送信した最新チャット
+            $latestChatAt = $item->purchase->chats()
+                ->latest('created_at')
+                ->value('created_at');
+
+            $item->unread_count = $unreadCount;
+            $item->latest_chat_at = $latestChatAt;
+
+            return $item;
+        });
+
+        // 最新メッセージ順に並び替え
+        $transactionList = $transactionList
+            ->sortByDesc('latest_chat_at')
+            ->values();
+
+        return $transactionList;
     }
 }

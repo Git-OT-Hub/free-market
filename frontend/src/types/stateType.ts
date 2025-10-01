@@ -100,9 +100,9 @@ type PurchaseType = {
 }
 
 export type TransactionType = {
-    id: number;
     name: string;
     image: string;
     sold_at: string;
     purchase: PurchaseType;
+    unread_count?: number;
 }

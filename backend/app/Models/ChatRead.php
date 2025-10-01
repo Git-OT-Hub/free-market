@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ChatRead extends Model
 {
@@ -19,4 +20,14 @@ class ChatRead extends Model
         'user_id',
         'read_at',
     ];
+
+    /**
+     * 既読履歴に紐づくチャットを取得するリレーション
+     *
+     * @return BelongsTo<\App\Models\Chat>
+     */
+    public function chat(): BelongsTo
+    {
+        return $this->belongsTo(Chat::class);
+    }
 }

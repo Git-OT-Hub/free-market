@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Chat extends Model
 {
@@ -21,4 +23,24 @@ class Chat extends Model
         'message',
         'image',
     ];
+
+    /**
+     * チャットに紐づく購入履歴を取得するリレーション
+     *
+     * @return BelongsTo<\App\Models\Purchase>
+     */
+    public function purchase(): BelongsTo
+    {
+        return $this->belongsTo(Purchase::class);
+    }
+
+    /**
+     * チャットに紐づく既読履歴を取得するリレーション
+     *
+     * @return HasOne<\App\Models\ChatRead>
+     */
+    public function chatRead(): HasOne
+    {
+        return $this->hasOne(ChatRead::class);
+    }
 }

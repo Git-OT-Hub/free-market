@@ -8,7 +8,7 @@ import ExhibitList from "../../components/ItemList/ExhibitList";
 import PurchaseList from "../../components/ItemList/PurchaseList";
 import TransactionList from "../../components/ItemList/TransactionList";
 import type { ItemType, MypageProfileType, TransactionType } from "../../types/stateType";
-import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink, StyledHeaderTransactionList } from "./StyledMypage";
+import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink, StyledHeaderTransactionList, StyledTotalCount } from "./StyledMypage";
 
 const HTTP_OK = 200;
 
@@ -20,6 +20,7 @@ const Mypage: React.FC = () => {
     const [exhibitList, setExhibitList] = useState<ItemType[]>([]);
     const [purchaseList, setPurchaseList] = useState<ItemType[]>([]);
     const [transactionList, setTransactionList] = useState<TransactionType[]>([]);
+    const [totalUnreadCount, setTotalUnreadCount] = useState<number>(0);
 
     const [profile, setProfile] = useState<MypageProfileType>({
         image: "",
@@ -37,6 +38,7 @@ const Mypage: React.FC = () => {
     // 商品一覧取得
     useLayoutEffect(() => {
         http.get('/api/profile/my_items').then((res) => {
+            console.log(res)
             if (res.status === HTTP_OK) {
                 const allExhibitList = res.data.exhibitList;
                 const allPurchaseList = res.data.purchaseList;
@@ -46,6 +48,8 @@ const Mypage: React.FC = () => {
                     image: res.data.profileImage,
                     name: res.data.userName,
                 });
+
+                setTotalUnreadCount(res.data.totalUnreadCount);
 
                 if (keyword) {
                     const filteredExhibitList = allExhibitList.filter((item: ItemType) => item.name.includes(keyword));
@@ -150,6 +154,11 @@ const Mypage: React.FC = () => {
                     <span
                         onClick={clickedTransactionList}
                     >取引中の商品</span>
+                    {totalUnreadCount > 0 && (
+                        <StyledTotalCount>
+                            {totalUnreadCount}
+                        </StyledTotalCount>
+                    )}
                 </StyledHeaderTransactionList>
             </StyledHeader>
             {isExhibitList && <ExhibitList exhibitList={exhibitList} />}

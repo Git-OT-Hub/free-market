@@ -18,6 +18,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactionList }) =>
                         name={item.name}
                         image={item.image}
                         sold_at={item.sold_at}
+                        unread_count={item.unread_count}
                     />
                 );
             })}

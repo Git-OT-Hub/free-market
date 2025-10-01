@@ -16,6 +16,7 @@ type StyledHeaderTransactionListProps = {
 
 export const StyledHeader = memo(styled.div`
     border-bottom: 1px solid #5f5f5f;
+    padding-bottom: 8px;
     height: 60px;
     display: flex;
     justify-content: start;
@@ -46,7 +47,7 @@ export const StyledHeaderTransactionList = memo(styled.div<StyledHeaderTransacti
     width: 25%;
     text-align: center;
 
-    span {
+    span:first-of-type {
         cursor: pointer;
         color: ${({ $isTransactionList }) => $isTransactionList ? '#fb2020' : ''};
     }
@@ -106,4 +107,13 @@ export const StyledButLink = memo(styled(Link)`
     cursor: pointer;
     padding: 0 16px;
     font-weight: bold;
+`);
+
+export const StyledTotalCount = memo(styled.span`
+    margin-left: 8px;
+    background: #fb5555;
+    color: #fff;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 8px;
 `);
