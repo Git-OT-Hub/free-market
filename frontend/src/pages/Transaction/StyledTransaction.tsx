@@ -135,6 +135,8 @@ export const StyledChat = memo(styled.div`
 export const StyledChatMessages = memo(styled.div`
     flex: 1;
     overflow-y: auto;
+    padding: 8px 16px;
+    width: 100%;
 `);
 
 export const StyledChatInputArea = memo(styled.div`

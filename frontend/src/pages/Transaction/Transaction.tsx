@@ -11,6 +11,7 @@ import type { RootState } from "../../store/store";
 import http from "../../lib/axios";
 import Loading from "../../components/Loading/Loading";
 import { useNavigate } from "react-router-dom";
+import Chat from "../../components/Chat/Chat";
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
@@ -235,9 +236,13 @@ const Transaction: React.FC = () => {
                 </StyledItem>
                 <StyledChat>
                     <StyledChatMessages>
-                        <div>こんにちは！</div>
-                        <div>お元気ですか？</div>
-                        <div>テストメッセージ</div>
+                        {chats.map((chat) => (
+                            <Chat
+                                key={chat.chat_id}
+                                chat={chat}
+                                userId={userId}
+                            />
+                        ))}
                     </StyledChatMessages>
                     <StyledChatInputArea>
                         <StyledChatInputAreaForm>

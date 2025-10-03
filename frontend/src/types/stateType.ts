@@ -125,10 +125,10 @@ export type TransactionItemType = {
 }
 
 export type TransactionChatType = {
-    user_id: string;
-    user_name: number;
+    user_id: number;
+    user_name: string;
     user_image: string | null;
-    chat_id: string;
+    chat_id: number;
     chat_message: string;
     chat_image: string | null;
 }
