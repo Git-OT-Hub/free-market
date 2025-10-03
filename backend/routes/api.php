@@ -58,5 +58,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::post('/transaction/chat/create', [TransactionController::class, 'createChat']);
         // 取引画面
         Route::get('/transaction/{id}/contents', [TransactionController::class, 'contents']);
+        // チャット編集
+        Route::post('/transaction/chat/update', [TransactionController::class, 'updateChat']);
     });
 });

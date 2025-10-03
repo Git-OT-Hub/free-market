@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\ChatRequest;
+use App\Http\Requests\ChatEditRequest;
 use App\Services\Contracts\TransactionServiceInterface;
 use App\Models\Purchase;
+use App\Models\Chat;
 
 class TransactionController extends Controller
 {
@@ -58,5 +60,20 @@ class TransactionController extends Controller
         }
 
         return response()->json($res, Response::HTTP_OK);
+    }
+
+    /**
+     * チャットの編集処理を行い、その結果を JSON形式で返す
+     *
+     * @param ChatEditRequest $request
+     * @return JsonResponse
+    */
+    public function updateChat(ChatEditRequest $request): JsonResponse
+    {
+        // ポリシーの呼び出し
+        $chat = Chat::find($request->chat_id);
+        $this->authorize('update', $chat);
+
+        return response()->json('edit!!', Response::HTTP_OK);
     }
 }

@@ -42,12 +42,12 @@ class TransactionService implements TransactionServiceInterface
             $userImage = $user->profile->image;
 
             return [
-                'user_id' => $user->id,
-                'user_name' => $user->name,
-                'user_image' => $userImage,
-                'chat_id' => $chat->id,
-                'chat_message' => $chat->message,
-                'chat_image' => $chat->image,
+                'user_id' => $user->id ?? null,
+                'user_name' => $user->name ?? null,
+                'user_image' => $userImage ?? null,
+                'chat_id' => $chat->id ?? null,
+                'chat_message' => $chat->message ?? null,
+                'chat_image' => $chat->image ?? null,
             ];
         } catch (\Throwable $e) {
             return null;

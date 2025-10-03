@@ -14,6 +14,7 @@ export const StyledContent = memo(styled.div<StyledContentProps>`
     flex-direction: column;
     width: 100%;
     align-items: ${({ $alignItems }) => $alignItems};
+    margin-bottom: 16px;
 `);
 
 export const StyledUserInf = memo(styled.div<StyledUserInfProps>`

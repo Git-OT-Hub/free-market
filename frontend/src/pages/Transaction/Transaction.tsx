@@ -13,6 +13,7 @@ import Loading from "../../components/Loading/Loading";
 import { useNavigate } from "react-router-dom";
 import Chat from "../../components/Chat/Chat";
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
+import ChatEditModal from "../../components/ChatEditModal/ChatEditModal";
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
@@ -67,7 +68,6 @@ const Transaction: React.FC = () => {
                     console.error('予期しないエラー: ', res.status);
                     return;
                 }
-                console.log(res)
 
                 if (res.data.other_transactions) {
                     setOtherTransactions(res.data.other_transactions);
@@ -178,6 +178,7 @@ const Transaction: React.FC = () => {
                 }
 
                 console.log(res);
+                setChats((prevChats) => [...prevChats, res.data]);
 
                 // 保存したメッセージ削除
                 const newDrafts = { ...drafts };
@@ -203,6 +204,12 @@ const Transaction: React.FC = () => {
                     return;
                 }
             });
+    };
+
+    // チャット編集
+    const [editingChat, setEditingChat] = useState<TransactionChatType | null>(null);
+    const closeModal = () => {
+        setEditingChat(null);
     };
 
     if (loading) {
@@ -263,10 +270,17 @@ const Transaction: React.FC = () => {
                                 key={chat.chat_id}
                                 chat={chat}
                                 userId={userId}
+                                onEdit={(chat) => setEditingChat(chat)}
                             />
                         ))}
-                        <div ref={chatEndRef} />
+                        <div id="chat-end" ref={chatEndRef} />
                     </StyledChatMessages>
+                    {editingChat && (
+                        <ChatEditModal
+                            chat={editingChat}
+                            onClose={closeModal}
+                        />
+                    )}
                     <StyledChatInputArea>
                         <StyledChatInputAreaForm>
                             <StyledScrollArea>
