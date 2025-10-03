@@ -38,7 +38,6 @@ const Mypage: React.FC = () => {
     // 商品一覧取得
     useLayoutEffect(() => {
         http.get('/api/profile/my_items').then((res) => {
-            console.log(res)
             if (res.status === HTTP_OK) {
                 const allExhibitList = res.data.exhibitList;
                 const allPurchaseList = res.data.purchaseList;

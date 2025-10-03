@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Http\Requests\ChatRequest;
 use App\Models\User;
@@ -116,5 +117,52 @@ class TransactionRepository implements TransactionRepositoryInterface
         Storage::disk("public")->put($filename, $imageFile->encode());
 
         return $filename;
+    }
+
+    /**
+     * 商品情報、取引相手情報、ログインユーザー情報、チャット情報、もしくは null を返す
+     *
+     * @param string $id
+     * @return array{
+     *   item: Item,
+     *   partner: User,
+     *   other_transaction_list: Collection<int, Item>|null,
+     *   chats: Collection<int, Chat>|null,
+     * }|null
+     */
+    public function findContents(string $id): array|null
+    {
+        try {
+            $purchase = Purchase::find($id);
+            $item = Item::find($purchase->item_id);
+            $user = Auth::user();
+            $partner = null;
+            if ((int)$purchase->user_id === (int)$user->id) {
+                // ログインユーザーが購入者の場合
+                $partner = User::find($item->user_id);
+            } else if ((int)$item->user_id === (int)$user->id) {
+                // ログインユーザーが出品者の場合
+                $partner = User::find($purchase->user_id);
+            }
+            // その他の取引商品リストを取得
+            $transactionList = $user->transactionList();
+            $otherTransactionList = $transactionList->reject(function ($tItem) use ($item) {
+                return $tItem->id === $item->id;
+            })->values();
+            // チャットリスト
+            $chats = $purchase->chats()
+                ->with(['user.profile'])
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            return [
+                'item' => $item,
+                'partner' => $partner,
+                'other_transaction_list' => $otherTransactionList,
+                'chats' => $chats,
+            ];
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }

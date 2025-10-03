@@ -54,7 +54,9 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::post('/items/{id}/purchase/checkout', [PurchaseController::class, 'createCheckoutSession']);
         // 配送先住所変更
         Route::post('/profile/address/update', [ProfileController::class, 'shippingAddressUpdate']);
-        // チャット
+        // チャット登録
         Route::post('/transaction/chat/create', [TransactionController::class, 'createChat']);
+        // 取引画面
+        Route::get('/transaction/{id}/contents', [TransactionController::class, 'contents']);
     });
 });

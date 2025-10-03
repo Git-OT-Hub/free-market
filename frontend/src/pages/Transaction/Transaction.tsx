@@ -1,20 +1,26 @@
-import { StyledContent, StyledOtherTransactions, StyledTransaction, StyledTradingPartner, StyledItem, StyledItemImg, StyledItemText, StyledChat, StyledChatMessages, StyledChatInputArea, StyledChatInputAreaText, StyledChatInputAreaFile, StyledChatInputAreaSubmit, StyledChatInputAreaForm, StyledChatInputAreaView, StyledChatInputAreaPreview, StyledChatInputAreaError } from "./StyledTransaction";
+import { StyledContent, StyledOtherTransactions, StyledTransaction, StyledTradingPartner, StyledItem, StyledItemImg, StyledItemText, StyledChat, StyledChatMessages, StyledChatInputArea, StyledChatInputAreaText, StyledChatInputAreaFile, StyledChatInputAreaSubmit, StyledChatInputAreaForm, StyledChatInputAreaView, StyledChatInputAreaPreview, StyledChatInputAreaError, StyledOtherTransaction, StyledTradingPartnerInf, StyledNoImg } from "./StyledTransaction";
 import { useParams } from "react-router-dom";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useSaveMessage } from "../../hooks/useSaveMessage";
 import { httpMultipart } from "../../lib/axios";
-import type { ValidationErrorsType } from "../../types/stateType";
+import type { ValidationErrorsType, TransactionPartnerType, OtherTransactionsType, TransactionItemType, TransactionChatType } from "../../types/stateType";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import http from "../../lib/axios";
+import Loading from "../../components/Loading/Loading";
+import { useNavigate } from "react-router-dom";
 
+const HTTP_OK = 200;
 const HTTP_CREATED = 201;
+const HTTP_FORBIDDEN = 403;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 
 const Transaction: React.FC = () => {
     const { id } = useParams();
     const userId = useSelector((state: RootState) => state.authAndLocation.userId);
+    const [loading, setLoading] = useState<boolean>(true);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [fileTypeError, setFileTypeError] = useState<string>('');
     const [image, setImage] = useState<File>();
@@ -25,6 +31,7 @@ const Transaction: React.FC = () => {
     const messageError = errors.errors['message'] || [];
     const imageError = errors.errors['image'] || [];
     const allErrors = [...messageError, ...imageError];
+    const imageUrl = "http://localhost:80/storage/";
 
     // メッセージ保持
     const transactionId = id ?? "";
@@ -33,6 +40,62 @@ const Transaction: React.FC = () => {
         {}
     );
     const message = drafts[transactionId] || "";
+
+    const navigate = useNavigate();
+
+    // 取引内容の状態管理
+    const [otherTransactions, setOtherTransactions] = useState<OtherTransactionsType[]>([]);
+    const [partner, setPartner] = useState<TransactionPartnerType>({
+        partner_name: '',
+        partner_image: '',
+    });
+    const [transactionItem, setTransactionItem] = useState<TransactionItemType>({
+        item_name: '',
+        item_price: 0,
+        item_image: '',
+        item_seller_id: 0,
+    });
+    const [chats, setChats] = useState<TransactionChatType[]>([]);
+
+    useEffect(() => {
+        http.get(`/api/transaction/${id}/contents`)
+            .then((res) => {
+                if (res.status !== HTTP_OK) {
+                    console.error('予期しないエラー: ', res.status);
+                    return;
+                }
+                console.log(res)
+
+                if (res.data.other_transactions) {
+                    setOtherTransactions(res.data.other_transactions);
+                }
+                setPartner({
+                    partner_name: res.data.partner_name,
+                    partner_image: res.data.partner_image,
+                });
+                setTransactionItem({
+                    item_name: res.data.item_name,
+                    item_price: res.data.item_price,
+                    item_image: res.data.item_image,
+                    item_seller_id: res.data.item_seller_id,
+                });
+                if (res.data.chats) {
+                    setChats(res.data.chats);
+                }
+
+                setLoading(false);
+            })
+            .catch((e) => {
+                if (e.status === HTTP_FORBIDDEN) {
+                    navigate('/mypage', { state: {type: 'failure', text: 'コンテンツが見つかりませんでした'}, replace: true });
+
+                    return;
+                }
+
+                console.error('予期しないエラー: ', e);
+            });
+    }, []);
+
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDrafts({
             ...drafts,
@@ -119,26 +182,54 @@ const Transaction: React.FC = () => {
             });
     };
 
+    if (loading) {
+        return (
+            <Loading />
+        );
+    }
+
     return (
         <StyledContent>
             <StyledOtherTransactions>
                 <h2>その他の取引</h2>
+                {otherTransactions.map((transaction) => (
+                    <StyledOtherTransaction
+                        key={transaction.purchase.id}
+                        to={`/transaction/${transaction.purchase.id}`}
+                    >
+                        {transaction.name}
+                    </StyledOtherTransaction>
+                ))}
             </StyledOtherTransactions>
             <StyledTransaction>
                 <StyledTradingPartner>
-                    <h2>さんとの取引画面</h2>
-                    <button>
-                        取引を完了する
-                    </button>
+                    <StyledTradingPartnerInf>
+                        {partner.partner_image ? (
+                            <img src={imageUrl + partner.partner_image} alt="partner img" />
+                        ) : (
+                            <StyledNoImg
+                                $width="60px"
+                                $height="60px"
+                            ></StyledNoImg>
+                        )}
+                        <h2>
+                            {partner.partner_name} さんとの取引画面
+                        </h2>
+                    </StyledTradingPartnerInf>
+                    {Number(transactionItem.item_seller_id) !== Number(userId) && (
+                        <button>
+                            取引を完了する
+                        </button>
+                    )}
                 </StyledTradingPartner>
                 <StyledItem>
                     <StyledItemImg>
-                        img
+                        <img src={imageUrl + transactionItem.item_image} alt="item img" />
                     </StyledItemImg>
                     <StyledItemText>
-                        <h2>商品名</h2>
+                        <h2>{transactionItem.item_name}</h2>
                         <p>
-                            商品価格
+                            ¥<span>{transactionItem.item_price}</span>(税込)
                         </p>
                     </StyledItemText>
                 </StyledItem>

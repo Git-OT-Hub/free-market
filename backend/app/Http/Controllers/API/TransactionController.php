@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\ChatRequest;
 use App\Services\Contracts\TransactionServiceInterface;
+use App\Models\Purchase;
 
 class TransactionController extends Controller
 {
@@ -34,5 +35,28 @@ class TransactionController extends Controller
         }
 
         return response()->json($res, Response::HTTP_CREATED);
+    }
+
+    /**
+     * チャットリスト、取引相手情報、取引商品情報を取得し、その結果を JSON形式で返す
+     *
+     * @param  string $id
+     * @return JsonResponse
+    */
+    public function contents(string $id): JsonResponse
+    {
+        // ポリシーの呼び出し
+        $purchase = Purchase::with(['item', 'user'])->find($id);
+        $this->authorize('view', $purchase);
+
+        $res = $this->transactionService->getContents($id);
+
+        if (!$res) {
+            return response()->json([
+                'message' => '取引内容の取得に失敗しました'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json($res, Response::HTTP_OK);
     }
 }

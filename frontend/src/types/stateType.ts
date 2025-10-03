@@ -106,3 +106,29 @@ export type TransactionType = {
     purchase: PurchaseType;
     unread_count?: number;
 }
+
+export type TransactionPartnerType = {
+    partner_name: string;
+    partner_image: string | null;
+}
+
+export type OtherTransactionsType = {
+    name: string;
+    purchase: PurchaseType;
+}
+
+export type TransactionItemType = {
+    item_name: string;
+    item_price: number;
+    item_image: string;
+    item_seller_id: number;
+}
+
+export type TransactionChatType = {
+    user_id: string;
+    user_name: number;
+    user_image: string | null;
+    chat_id: string;
+    chat_message: string;
+    chat_image: string | null;
+}

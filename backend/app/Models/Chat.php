@@ -43,4 +43,14 @@ class Chat extends Model
     {
         return $this->hasOne(ChatRead::class);
     }
+
+    /**
+     * チャットに紐づくユーザーを取得するリレーション
+     *
+     * @return BelongsTo<\App\Models\User>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

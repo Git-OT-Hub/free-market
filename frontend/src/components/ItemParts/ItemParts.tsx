@@ -16,7 +16,7 @@ const ItemParts: React.FC<ItemPartsProps> = ({ url, name, image, sold_at, unread
         <StyledContent>
             <StyledImage>
                 <img src={imageUrl + image} alt="item img" />
-                {unread_count && unread_count > 0 && (
+                {unread_count !== undefined && unread_count > 0 && (
                     <StyledUnreadCount>
                         {unread_count}
                     </StyledUnreadCount>
