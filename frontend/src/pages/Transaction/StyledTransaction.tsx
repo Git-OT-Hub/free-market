@@ -155,8 +155,16 @@ export const StyledChatInputAreaForm = memo(styled.form`
     gap: 0 12px;
 `);
 
+export const StyledScrollArea = memo(styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px 0;
+`);
+
 export const StyledChatInputAreaText = memo(styled.div`
-    flex: 6;
+    flex: 5;
     display: flex;
     align-items: center;
 

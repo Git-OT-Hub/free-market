@@ -1,4 +1,4 @@
-import { StyledContent, StyledOtherTransactions, StyledTransaction, StyledTradingPartner, StyledItem, StyledItemImg, StyledItemText, StyledChat, StyledChatMessages, StyledChatInputArea, StyledChatInputAreaText, StyledChatInputAreaFile, StyledChatInputAreaSubmit, StyledChatInputAreaForm, StyledChatInputAreaView, StyledChatInputAreaPreview, StyledChatInputAreaError, StyledOtherTransaction, StyledTradingPartnerInf, StyledNoImg } from "./StyledTransaction";
+import { StyledContent, StyledOtherTransactions, StyledTransaction, StyledTradingPartner, StyledItem, StyledItemImg, StyledItemText, StyledChat, StyledChatMessages, StyledChatInputArea, StyledChatInputAreaText, StyledChatInputAreaFile, StyledChatInputAreaSubmit, StyledChatInputAreaForm, StyledChatInputAreaView, StyledChatInputAreaPreview, StyledChatInputAreaError, StyledOtherTransaction, StyledTradingPartnerInf, StyledNoImg, StyledScrollArea } from "./StyledTransaction";
 import { useParams } from "react-router-dom";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
@@ -12,6 +12,7 @@ import http from "../../lib/axios";
 import Loading from "../../components/Loading/Loading";
 import { useNavigate } from "react-router-dom";
 import Chat from "../../components/Chat/Chat";
+import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
@@ -23,6 +24,7 @@ const Transaction: React.FC = () => {
     const userId = useSelector((state: RootState) => state.authAndLocation.userId);
     const [loading, setLoading] = useState<boolean>(true);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const chatEndRef = useRef<HTMLDivElement | null>(null);
     const [fileTypeError, setFileTypeError] = useState<string>('');
     const [image, setImage] = useState<File>();
     const [preview, setPreview] = useState<string>("");
@@ -96,6 +98,26 @@ const Transaction: React.FC = () => {
                 console.error('予期しないエラー: ', e);
             });
     }, []);
+
+    useEffect(() => {
+        if (chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [chats]);
+
+    const scrollUp = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    };
+
+    const scrollDown = () => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+        });
+    };
 
     const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDrafts({
@@ -243,9 +265,22 @@ const Transaction: React.FC = () => {
                                 userId={userId}
                             />
                         ))}
+                        <div ref={chatEndRef} />
                     </StyledChatMessages>
                     <StyledChatInputArea>
                         <StyledChatInputAreaForm>
+                            <StyledScrollArea>
+                                <IconContext.Provider value={{ style: { cursor: 'pointer', fontSize: '1.8rem' } }}>
+                                    <IoIosArrowDropup
+                                        onClick={scrollUp}
+                                    />
+                                </IconContext.Provider>
+                                <IconContext.Provider value={{ style: { cursor: 'pointer', fontSize: '1.8rem' } }}>
+                                    <IoIosArrowDropdown
+                                        onClick={scrollDown}
+                                    />
+                                </IconContext.Provider>
+                            </StyledScrollArea>
                             <StyledChatInputAreaText>
                                 <textarea
                                     ref={textareaRef}
