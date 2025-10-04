@@ -8,6 +8,8 @@ use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Http\Requests\ChatRequest;
 use App\Http\Requests\ChatEditRequest;
 use App\Models\Chat;
+use App\Mail\TransactionCompletedMail;
+use Illuminate\Support\Facades\Mail;
 
 class TransactionService implements TransactionServiceInterface
 {
@@ -208,7 +210,11 @@ class TransactionService implements TransactionServiceInterface
 
             $loginUser = $res['login_user'];
             $seller = $res['seller'];
+            $item = $res['item'];
             // メール送信
+            if ($loginUser->id !== $seller->id) {
+                Mail::to($seller->email)->send(new TransactionCompletedMail($seller, $loginUser, $item));
+            }
 
             return true;
         } catch (\Throwable $e) {

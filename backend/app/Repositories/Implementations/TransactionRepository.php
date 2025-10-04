@@ -281,6 +281,7 @@ class TransactionRepository implements TransactionRepositoryInterface
      * @return array{
      *   login_user: User,
      *   seller: User,
+     *   item: Item,
      * }|null
      */
     public function createEvaluation(Request $request): array|null
@@ -319,6 +320,7 @@ class TransactionRepository implements TransactionRepositoryInterface
                 return [
                     'login_user' => $user,
                     'seller' => $seller,
+                    'item' => $item,
                 ];
             });
 

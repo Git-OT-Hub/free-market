@@ -63,6 +63,7 @@ interface TransactionRepositoryInterface
      * @return array{
      *   login_user: User,
      *   seller: User,
+     *   item: Item,
      * }|null
      */
     public function createEvaluation(Request $request): array|null;
