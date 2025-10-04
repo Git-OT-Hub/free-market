@@ -45,14 +45,16 @@ const Chat: React.FC<ChatProps> = ({ chat, userId, onEdit, onDelete }) => {
                         />
                     </StyledImg>
                 )}
-                <StyledBtnArea>
-                    <span
-                        onClick={() => onEdit(chat)}
-                    >編集</span>
-                    <span
-                        onClick={() => onDelete(chat.chat_id)}
-                    >削除</span>
-                </StyledBtnArea>
+                {Number(userId) === Number(chat.user_id) && (
+                    <StyledBtnArea>
+                        <span
+                            onClick={() => onEdit(chat)}
+                        >編集</span>
+                        <span
+                            onClick={() => onDelete(chat.chat_id)}
+                        >削除</span>
+                    </StyledBtnArea>
+                )}
             </StyledContent>
         </>
     )

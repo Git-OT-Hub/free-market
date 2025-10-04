@@ -232,3 +232,15 @@ export const StyledChatInputAreaPreview = memo(styled.div`
         border-radius: 4px;
     }
 `);
+
+export const StyledChatInputAreaImgDelete = memo(styled.div`
+    text-align: end;
+    margin-top: 8px;
+
+    span {
+        padding-right: 16px;
+        cursor: pointer;
+        color: #fb5555;
+        font-weight: bold;
+    }
+`);

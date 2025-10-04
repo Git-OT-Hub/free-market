@@ -1,4 +1,4 @@
-import { StyledContent, StyledOtherTransactions, StyledTransaction, StyledTradingPartner, StyledItem, StyledItemImg, StyledItemText, StyledChat, StyledChatMessages, StyledChatInputArea, StyledChatInputAreaText, StyledChatInputAreaFile, StyledChatInputAreaSubmit, StyledChatInputAreaForm, StyledChatInputAreaView, StyledChatInputAreaPreview, StyledChatInputAreaError, StyledOtherTransaction, StyledTradingPartnerInf, StyledNoImg, StyledScrollArea } from "./StyledTransaction";
+import { StyledContent, StyledOtherTransactions, StyledTransaction, StyledTradingPartner, StyledItem, StyledItemImg, StyledItemText, StyledChat, StyledChatMessages, StyledChatInputArea, StyledChatInputAreaText, StyledChatInputAreaFile, StyledChatInputAreaSubmit, StyledChatInputAreaForm, StyledChatInputAreaView, StyledChatInputAreaPreview, StyledChatInputAreaError, StyledOtherTransaction, StyledTradingPartnerInf, StyledNoImg, StyledScrollArea, StyledChatInputAreaImgDelete } from "./StyledTransaction";
 import { useParams } from "react-router-dom";
 import { IoPaperPlaneOutline } from "react-icons/io5";
 import { IconContext } from "react-icons";
@@ -26,6 +26,7 @@ const Transaction: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chatEndRef = useRef<HTMLDivElement | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [fileTypeError, setFileTypeError] = useState<string>('');
     const [image, setImage] = useState<File>();
     const [preview, setPreview] = useState<string>("");
@@ -195,11 +196,8 @@ const Transaction: React.FC = () => {
                 setImage(undefined);
                 setPreview("");
                 setFileTypeError("");
-                const fileInput = document.querySelector<HTMLInputElement>(
-                    "input[type='file']"
-                );
-                if (fileInput) {
-                    fileInput.value = "";
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
                 }
             })
             .catch((e) => {
@@ -251,6 +249,16 @@ const Transaction: React.FC = () => {
 
                     console.error('予期しないエラー: ', e);
                 });
+        }
+    };
+
+    // 送信フォームの添付画像削除
+    const handleDeleteImg = () => {
+        setImage(undefined);
+        setPreview("");
+        setFileTypeError("");
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
         }
     };
 
@@ -355,6 +363,7 @@ const Transaction: React.FC = () => {
                                         type="file"
                                         accept="image/jpeg, image/png"
                                         onChange={handleFile}
+                                        ref={fileInputRef}
                                     />
                                 </label>
                             </StyledChatInputAreaFile>
@@ -380,7 +389,16 @@ const Transaction: React.FC = () => {
                             </StyledChatInputAreaError>
                             <StyledChatInputAreaPreview>
                                 {preview && (
-                                    <img src={preview} alt="preview img" />
+                                    <>
+                                        <img src={preview} alt="preview img" />
+                                        <StyledChatInputAreaImgDelete>
+                                            <span
+                                                onClick={handleDeleteImg}
+                                            >
+                                                削除
+                                            </span>
+                                        </StyledChatInputAreaImgDelete>
+                                    </>
                                 )}
                             </StyledChatInputAreaPreview>
                         </StyledChatInputAreaView>
