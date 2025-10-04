@@ -163,7 +163,7 @@ const Transaction: React.FC = () => {
 
         setFileTypeError('');
         if (isFileType) {
-            setFileTypeError('ファイル形式は、jpeg, png のみ添付可能です。');
+            setFileTypeError('「.png」または「.jpeg」形式でアップロードしてください');
             return;
         };
 

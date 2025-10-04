@@ -231,7 +231,7 @@ CO06〜CO10の商品データ（Proテスト 案件シートの「ダミーデ�
 ```
 
 ## ER図
-[![Image from Gyazo](https://i.gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff.png)](https://gyazo.com/0ff0fae30b4c9b6aa5ab4189ab9c35ff)
+[![Image from Gyazo](https://i.gyazo.com/77ab7af4b4feed8c28ce763e1ab3fe5a.png)](https://gyazo.com/77ab7af4b4feed8c28ce763e1ab3fe5a)
 
 ## 使用技術
 ### フロントエンド
