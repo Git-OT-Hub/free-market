@@ -99,10 +99,14 @@ const Transaction: React.FC = () => {
             });
     }, []);
 
+    const [shouldScroll, setShouldScroll] = useState<boolean>(true);
+
     useEffect(() => {
-        if (chatEndRef.current) {
+        if (shouldScroll && chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
+
+        setShouldScroll(true);
     }, [chats]);
 
     const scrollUp = () => {
@@ -177,7 +181,7 @@ const Transaction: React.FC = () => {
                     return;
                 }
 
-                console.log(res);
+                setShouldScroll(true);
                 setChats((prevChats) => [...prevChats, res.data]);
 
                 // 保存したメッセージ削除
@@ -210,6 +214,15 @@ const Transaction: React.FC = () => {
     const [editingChat, setEditingChat] = useState<TransactionChatType | null>(null);
     const closeModal = () => {
         setEditingChat(null);
+    };
+    const handleUpdateChat = (chat: TransactionChatType) => {
+        setShouldScroll(false);
+        setChats((prevChats) =>
+            prevChats.map((prevChat) =>
+                prevChat.chat_id === chat.chat_id ? chat : prevChat
+            )
+        );
+        closeModal();
     };
 
     if (loading) {
@@ -279,6 +292,7 @@ const Transaction: React.FC = () => {
                         <ChatEditModal
                             chat={editingChat}
                             onClose={closeModal}
+                            onEdit={handleUpdateChat}
                         />
                     )}
                     <StyledChatInputArea>

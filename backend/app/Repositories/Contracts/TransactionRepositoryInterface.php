@@ -3,6 +3,7 @@
 namespace App\Repositories\Contracts;
 
 use App\Http\Requests\ChatRequest;
+use App\Http\Requests\ChatEditRequest;
 use App\Models\User;
 use App\Models\Chat;
 use App\Models\Item;
@@ -33,4 +34,16 @@ interface TransactionRepositoryInterface
      * }|null
      */
     public function findContents(string $id): array|null;
+
+    /**
+     * チャット内容を編集
+     * ユーザー情報、チャット情報、もしくは null を返す
+     *
+     * @param ChatEditRequest $request
+     * @return array{
+     *   user: User,
+     *   chat: Chat,
+     * }|null
+     */
+    public function fixChatContent(ChatEditRequest $request): array|null;
 }

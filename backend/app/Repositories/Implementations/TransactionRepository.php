@@ -11,6 +11,7 @@ use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Http\Requests\ChatRequest;
+use App\Http\Requests\ChatEditRequest;
 use App\Models\User;
 use App\Models\Item;
 use App\Models\Purchase;
@@ -161,6 +162,69 @@ class TransactionRepository implements TransactionRepositoryInterface
                 'other_transaction_list' => $otherTransactionList,
                 'chats' => $chats,
             ];
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * チャット内容を編集
+     * ユーザー情報、チャット情報、もしくは null を返す
+     *
+     * @param ChatEditRequest $request
+     * @return array{
+     *   user: User,
+     *   chat: Chat,
+     * }|null
+     */
+    public function fixChatContent(ChatEditRequest $request): array|null
+    {
+        try {
+            $res = DB::transaction(function () use($request) {
+                $chat = Chat::find($request->chat_id);
+                $message = $request->message;
+                $image = $request->image;
+                $removeImgFlg = $request->remove_image;
+                $user = Auth::user();
+                define("REMOVE_IMAGE_TRUE", 1);
+
+                if ((int)$removeImgFlg === REMOVE_IMAGE_TRUE || $image) {
+                    // 画像削除フラグがtrueの時、または、画像が添付されている時
+
+                    // 既存の画像があれば削除
+                    if ($currentImage = $chat->image) {
+                        Storage::disk("public")->delete($currentImage);
+                    }
+                    // 画像の保存
+                    $filename = "";
+                    if ($image) {
+                        $filename = $this->saveImage($image);
+                    }
+
+                    $chat->update([
+                        'message' => $message,
+                        'image' =>$filename,
+                    ]);
+
+                    return [
+                        'user' => $user,
+                        'chat' => $chat->fresh(),
+                    ];
+                } else {
+                    // 編集がメッセージのみの時
+
+                    $chat->update([
+                        'message' => $message,
+                    ]);
+
+                    return [
+                        'user' => $user,
+                        'chat' => $chat->fresh(),
+                    ];
+                }
+            });
+
+            return $res;
         } catch (\Throwable $e) {
             return null;
         }

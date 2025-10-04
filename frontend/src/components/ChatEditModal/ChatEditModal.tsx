@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 type ChatEditModalProps = {
     chat: TransactionChatType;
     onClose: () => void;
+    onEdit: (chat: TransactionChatType) => void;
 };
 
 const TRUE = '1';
@@ -17,7 +18,7 @@ const HTTP_OK = 200;
 const HTTP_FORBIDDEN = 403;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 
-const ChatEditModal: React.FC<ChatEditModalProps> = ({ chat, onClose }) => {
+const ChatEditModal: React.FC<ChatEditModalProps> = ({ chat, onClose, onEdit }) => {
     const imageUrl = "http://localhost:80/storage/";
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [message, setMessage] = useState(chat.chat_message);
@@ -89,9 +90,7 @@ const ChatEditModal: React.FC<ChatEditModalProps> = ({ chat, onClose }) => {
                     return;
                 }
 
-                console.log(res);
-
-
+                onEdit(res.data);
             })
             .catch((e) => {
                 if (e.response.status === HTTP_UNPROCESSABLE_ENTITY) {

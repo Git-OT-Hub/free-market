@@ -4,6 +4,7 @@ namespace App\Services\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\ChatRequest;
+use App\Http\Requests\ChatEditRequest;
 use App\Models\Item;
 
 interface TransactionServiceInterface
@@ -46,4 +47,19 @@ interface TransactionServiceInterface
      * }|null
      */
     public function getContents(string $id): array|null;
+
+    /**
+     * チャット内容の修正を行い、チャット画面に表示させる情報を返す
+     *
+     * @param ChatEditRequest $request
+     * @return array{
+     *   user_id: int,
+     *   user_name: string,
+     *   user_image: string|null,
+     *   chat_id: int,
+     *   chat_message: string,
+     *   chat_image: string|null,
+     * }|null
+     */
+    public function updateChatContent(ChatEditRequest $request): array|null;
 }

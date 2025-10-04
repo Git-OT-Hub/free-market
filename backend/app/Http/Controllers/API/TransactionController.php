@@ -74,6 +74,14 @@ class TransactionController extends Controller
         $chat = Chat::find($request->chat_id);
         $this->authorize('update', $chat);
 
-        return response()->json('edit!!', Response::HTTP_OK);
+        $res = $this->transactionService->updateChatContent($request);
+
+        if (!$res) {
+            return response()->json([
+                'message' => '取引内容の取得に失敗しました'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json($res, Response::HTTP_OK);
     }
 }
