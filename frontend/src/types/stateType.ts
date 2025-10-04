@@ -122,6 +122,7 @@ export type TransactionItemType = {
     item_price: number;
     item_image: string;
     item_seller_id: number;
+    transaction_complete_flg: number;
 }
 
 export type TransactionChatType = {

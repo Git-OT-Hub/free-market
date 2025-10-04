@@ -62,5 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::post('/transaction/chat/update', [TransactionController::class, 'updateChat']);
         // チャット削除
         Route::delete('/transaction/chat/{id}/delete', [TransactionController::class, 'deleteChat']);
+        // 取引評価
+        Route::post('/transaction/complete', [TransactionController::class, 'complete']);
     });
 });

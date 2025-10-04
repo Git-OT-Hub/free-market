@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -43,6 +44,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * ユーザーに紐づく取引評価を取得するリレーション
+     *
+     * @return HasMany<\App\Models\TransactionEvaluation>
+     */
+    public function transactionEvaluations(): HasMany
+    {
+        return $this->hasMany(TransactionEvaluation::class);
+    }
 
     public function profile()
     {

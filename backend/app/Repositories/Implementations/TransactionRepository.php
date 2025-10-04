@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Implementations;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\UploadedFile;
@@ -17,6 +18,7 @@ use App\Models\Item;
 use App\Models\Purchase;
 use App\Models\Chat;
 use App\Models\ChatRead;
+use App\Models\TransactionEvaluation;
 use Carbon\Carbon;
 
 class TransactionRepository implements TransactionRepositoryInterface
@@ -264,6 +266,60 @@ class TransactionRepository implements TransactionRepositoryInterface
                 $chat->delete();
 
                 return $chat;
+            });
+
+            return $res;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * 取引評価処理
+     *
+     * @param Request $request
+     * @return array{
+     *   login_user: User,
+     *   seller: User,
+     * }|null
+     */
+    public function createEvaluation(Request $request): array|null
+    {
+        try {
+            $res = DB::transaction(function () use($request) {
+                $purchaseId = $request->purchase_id;
+                $rating = $request->rating;
+                $purchase = Purchase::find($purchaseId);
+                $item = Item::find($purchase->item_id);
+                $user = Auth::user();
+                $partner = null;
+                $seller = User::find($item->user_id);
+
+                // purchasesテーブル更新
+                $purchase->update([
+                    'is_transaction_completed' => true,
+                ]);
+
+                // 取引相手を取得
+                if ((int)$purchase->user_id === (int)$user->id) {
+                    // ログインユーザーが購入者の場合
+                    $partner = User::find($item->user_id);
+                } else if ((int)$item->user_id === (int)$user->id) {
+                    // ログインユーザーが出品者の場合
+                    $partner = User::find($purchase->user_id);
+                }
+
+                // 取引相手の評価データ作成
+                TransactionEvaluation::create([
+                    'purchase_id' => $purchase->id,
+                    'user_id' => $partner->id,
+                    'evaluation' => (int)$rating,
+                ]);
+
+                return [
+                    'login_user' => $user,
+                    'seller' => $seller,
+                ];
             });
 
             return $res;

@@ -61,6 +61,11 @@ export const StyledTradingPartner = memo(styled.div`
         padding: 8px 12px;
         height: 40px;
     }
+
+    span {
+        color: #fc8282;
+        font-weight: bold;
+    }
 `);
 
 export const StyledTradingPartnerInf = memo(styled.div`

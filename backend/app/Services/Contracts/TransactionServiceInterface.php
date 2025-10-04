@@ -2,6 +2,7 @@
 
 namespace App\Services\Contracts;
 
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\ChatRequest;
 use App\Http\Requests\ChatEditRequest;
@@ -37,6 +38,8 @@ interface TransactionServiceInterface
      *   item_price: int,
      *   item_image: string,
      *   item_seller_id: int,
+     *   transaction_complete_flg: int,
+     *   is_evaluated: int,
      *   chats: array<int, array{
      *     user_id: int,
      *     user_name: string,
@@ -71,4 +74,12 @@ interface TransactionServiceInterface
      * @return Chat|null
      */
     public function deleteChatContent(string $id): Chat|null;
+
+    /**
+     * 取引評価処理
+     *
+     * @param Request $request
+     * @return bool|null
+     */
+    public function completeTransaction(Request $request): bool|null;
 }

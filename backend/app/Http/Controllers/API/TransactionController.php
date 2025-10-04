@@ -107,4 +107,23 @@ class TransactionController extends Controller
 
         return response()->json($res, Response::HTTP_OK);
     }
+
+    /**
+     * 取引評価処理を行い、その結果を JSON形式で返す
+     *
+     * @param Request $request
+     * @return JsonResponse
+    */
+    public function complete(Request $request): JsonResponse
+    {
+        $res = $this->transactionService->completeTransaction($request);
+
+        if (!$res) {
+            return response()->json([
+                'message' => '取引評価処理に失敗しました'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json($res, Response::HTTP_CREATED);
+    }
 }

@@ -14,11 +14,15 @@ import { useNavigate } from "react-router-dom";
 import Chat from "../../components/Chat/Chat";
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import ChatEditModal from "../../components/ChatEditModal/ChatEditModal";
+import EvaluationModal from "../../components/EvaluationModal/EvaluationModal";
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
 const HTTP_FORBIDDEN = 403;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
+const COMPLETE_TRUE = 1;
+const COMPLETE_FALSE = 0;
+const EVALUATED_FALSE = 0;
 
 const Transaction: React.FC = () => {
     const { id } = useParams();
@@ -59,6 +63,7 @@ const Transaction: React.FC = () => {
         item_price: 0,
         item_image: '',
         item_seller_id: 0,
+        transaction_complete_flg: 0,
     });
     const [chats, setChats] = useState<TransactionChatType[]>([]);
 
@@ -82,12 +87,18 @@ const Transaction: React.FC = () => {
                     item_price: res.data.item_price,
                     item_image: res.data.item_image,
                     item_seller_id: res.data.item_seller_id,
+                    transaction_complete_flg: res.data.transaction_complete_flg,
                 });
                 if (res.data.chats) {
                     setChats(res.data.chats);
                 }
 
                 setLoading(false);
+
+                console.log(res)
+                if (Number(res.data.item_seller_id) === Number(userId) && Number(res.data.transaction_complete_flg) === COMPLETE_TRUE && Number(res.data.is_evaluated) === EVALUATED_FALSE) {
+                    setEvaluationModal(true);
+                }
             })
             .catch((e) => {
                 if (e.status === HTTP_FORBIDDEN) {
@@ -262,6 +273,14 @@ const Transaction: React.FC = () => {
         }
     };
 
+    // 取引完了処理
+    const [evaluationModal, setEvaluationModal] = useState<boolean>(false);
+    const handleComplete = () => {
+        if (confirm("この取引を完了しますか？")) {
+            setEvaluationModal(true);
+        }
+    };
+
     if (loading) {
         return (
             <Loading />
@@ -296,10 +315,17 @@ const Transaction: React.FC = () => {
                             {partner.partner_name} さんとの取引画面
                         </h2>
                     </StyledTradingPartnerInf>
-                    {Number(transactionItem.item_seller_id) !== Number(userId) && (
-                        <button>
+                    {Number(transactionItem.item_seller_id) !== Number(userId) && Number(transactionItem.transaction_complete_flg) === COMPLETE_FALSE && (
+                        <button
+                            onClick={handleComplete}
+                        >
                             取引を完了する
                         </button>
+                    )}
+                    {Number(transactionItem.transaction_complete_flg) === COMPLETE_TRUE && (
+                        <span>
+                            取引完了
+                        </span>
                     )}
                 </StyledTradingPartner>
                 <StyledItem>
@@ -405,6 +431,11 @@ const Transaction: React.FC = () => {
                     </StyledChatInputArea>
                 </StyledChat>
             </StyledTransaction>
+            {evaluationModal && (
+                <EvaluationModal
+                    purchaseId={transactionId}
+                />
+            )}
         </StyledContent>
     )
 }

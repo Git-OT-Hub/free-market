@@ -2,6 +2,7 @@
 
 namespace App\Services\Implementations;
 
+use Illuminate\Http\Request;
 use App\Services\Contracts\TransactionServiceInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Http\Requests\ChatRequest;
@@ -68,6 +69,8 @@ class TransactionService implements TransactionServiceInterface
      *   item_price: int,
      *   item_image: string,
      *   item_seller_id: int,
+     *   transaction_complete_flg: int,
+     *   is_evaluated: int,
      *   chats: array<int, array{
      *     user_id: int,
      *     user_name: string,
@@ -87,9 +90,16 @@ class TransactionService implements TransactionServiceInterface
             }
 
             $item = $res['item'];
+            $transactionCompleteFlg = $item->purchase->is_transaction_completed;
             $partner = $res['partner'];
             $otherTransactionList = $res['other_transaction_list'];
             $chats = $res['chats'];
+
+            // 取引相手を評価済みかどうか
+            $isEvaluated = $partner->transactionEvaluations()
+                ->where('purchase_id', $item->purchase->id)
+                ->where('user_id', $partner->id)
+                ->exists() ? 1 : 0;
 
             // レスポンス用にチャットデータ加工
             $resChats = [];
@@ -112,6 +122,8 @@ class TransactionService implements TransactionServiceInterface
                 'item_price' => $item->price ?? null,
                 'item_image' => $item->image ?? null,
                 'item_seller_id' => $item->user_id ?? null,
+                'transaction_complete_flg' => $transactionCompleteFlg ?? null,
+                'is_evaluated' => $isEvaluated ?? null,
                 'chats' => $resChats ?? null,
             ];
         } catch (\Throwable $e) {
@@ -174,6 +186,31 @@ class TransactionService implements TransactionServiceInterface
             }
 
             return $res;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * 取引評価処理
+     *
+     * @param Request $request
+     * @return bool|null
+     */
+    public function completeTransaction(Request $request): bool|null
+    {
+        try {
+            $res = $this->transactionRepository->createEvaluation($request);
+
+            if (!$res) {
+                return null;
+            }
+
+            $loginUser = $res['login_user'];
+            $seller = $res['seller'];
+            // メール送信
+
+            return true;
         } catch (\Throwable $e) {
             return null;
         }

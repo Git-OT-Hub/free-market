@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\ChatRequest;
 use App\Http\Requests\ChatEditRequest;
 use App\Models\User;
@@ -54,4 +55,15 @@ interface TransactionRepositoryInterface
      * @return Chat|null
      */
     public function destroyChatContent(string $id): Chat|null;
+
+    /**
+     * 取引評価処理
+     *
+     * @param Request $request
+     * @return array{
+     *   login_user: User,
+     *   seller: User,
+     * }|null
+     */
+    public function createEvaluation(Request $request): array|null;
 }
