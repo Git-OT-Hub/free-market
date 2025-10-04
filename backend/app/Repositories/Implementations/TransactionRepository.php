@@ -17,6 +17,7 @@ use App\Models\Item;
 use App\Models\Purchase;
 use App\Models\Chat;
 use App\Models\ChatRead;
+use Carbon\Carbon;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
@@ -155,6 +156,20 @@ class TransactionRepository implements TransactionRepositoryInterface
                 ->with(['user.profile'])
                 ->orderBy('created_at', 'asc')
                 ->get();
+            // チャットの既読処理
+            DB::transaction(function () use($chats, $user) {
+                $userId = $user->id;
+
+                // 自分以外が送ったチャットで、まだ未読のものを既読にする
+                $chatIds = $chats
+                    ->where('user_id', '!=', $userId)
+                    ->pluck('id');
+
+                ChatRead::whereIn('chat_id', $chatIds)
+                    ->where('user_id', $userId)
+                    ->whereNull('read_at')
+                    ->update(['read_at' => Carbon::now()]);
+            });
 
             return [
                 'item' => $item,
