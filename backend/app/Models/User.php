@@ -84,15 +84,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $itemsAsSeller = Item::with('purchase')
             ->where('user_id', Auth::id())
-            ->whereHas('purchase', function ($query) {
-                $query->where('is_transaction_completed', false);
-            })
+            ->whereHas('purchase')
             ->get();
 
         $itemsAsBuyer = Item::with('purchase')
             ->whereHas('purchase', function ($query) {
-                $query->where('user_id', Auth::id())
-                    ->where('is_transaction_completed', false);
+                $query->where('user_id', Auth::id());
             })
             ->get();
 
