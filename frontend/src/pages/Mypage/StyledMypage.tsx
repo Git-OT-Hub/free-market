@@ -83,8 +83,19 @@ export const StyledProfileImg = memo(styled.div`
 `);
 
 export const StyledProfileName = memo(styled.div`
-    font-size: 20px;
-    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 8px 0;
+
+    span {
+        font-size: 20px;
+        font-weight: bold;
+    }
+`);
+
+export const StyledEvaluation = memo(styled.div`
+    display: flex;
+    gap: 0 4px;
 `);
 
 export const StyledNoImage = memo(styled.div`

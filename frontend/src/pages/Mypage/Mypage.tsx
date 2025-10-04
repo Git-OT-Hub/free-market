@@ -8,7 +8,9 @@ import ExhibitList from "../../components/ItemList/ExhibitList";
 import PurchaseList from "../../components/ItemList/PurchaseList";
 import TransactionList from "../../components/ItemList/TransactionList";
 import type { ItemType, MypageProfileType, TransactionType } from "../../types/stateType";
-import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink, StyledHeaderTransactionList, StyledTotalCount } from "./StyledMypage";
+import { StyledHeader, StyledHeaderExhibitList, StyledHeaderPurchaseList, StyledProfile, StyledProfileInfo, StyledProfileBtn, StyledProfileImg, StyledProfileName, StyledNoImage, StyledButLink, StyledHeaderTransactionList, StyledTotalCount, StyledEvaluation } from "./StyledMypage";
+import { IconContext } from "react-icons";
+import { IoStar } from "react-icons/io5";
 
 const HTTP_OK = 200;
 
@@ -35,10 +37,13 @@ const Mypage: React.FC = () => {
     const query = new URLSearchParams(location.search);
     const keyword = query.get('search');
 
+    const [averageEvaluation, setAverageEvaluation] = useState<number | null>(null);
+
     // 商品一覧取得
     useLayoutEffect(() => {
         http.get('/api/profile/my_items').then((res) => {
             if (res.status === HTTP_OK) {
+                console.log(res)
                 const allExhibitList = res.data.exhibitList;
                 const allPurchaseList = res.data.purchaseList;
                 const allTransactionList = res.data.transactionList;
@@ -49,6 +54,7 @@ const Mypage: React.FC = () => {
                 });
 
                 setTotalUnreadCount(res.data.totalUnreadCount);
+                setAverageEvaluation(res.data.averageEvaluation);
 
                 if (keyword) {
                     const filteredExhibitList = allExhibitList.filter((item: ItemType) => item.name.includes(keyword));
@@ -122,6 +128,24 @@ const Mypage: React.FC = () => {
                     </StyledProfileImg>
                     <StyledProfileName>
                         <span>{profile.name}</span>
+                        {averageEvaluation !== null && (
+                            <StyledEvaluation>
+                                {[...Array(5)].map((_, i) => (
+                                    <IconContext.Provider
+                                        key={i}
+                                        value={{
+                                            style: {
+                                                cursor: "default",
+                                                fontSize: "2rem",
+                                                color: i < averageEvaluation ? "#fff048" : "#d9d9d9"
+                                            }
+                                        }}
+                                    >
+                                        <IoStar />
+                                    </IconContext.Provider>
+                                ))}
+                            </StyledEvaluation>
+                        )}
                     </StyledProfileName>
                 </StyledProfileInfo>
                 <StyledProfileBtn>

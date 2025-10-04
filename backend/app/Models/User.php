@@ -136,4 +136,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $transactionList;
     }
+
+    public function averageEvaluation()
+    {
+        $evaluations = $this->transactionEvaluations;
+        $averageEvaluation = null;
+        if ($evaluations->count() > 0) {
+            $sum = $evaluations->sum('evaluation');
+            $count = $evaluations->count();
+            $averageEvaluation = round($sum / $count);
+        }
+
+        return $averageEvaluation;
+    }
 }

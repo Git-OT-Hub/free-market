@@ -91,6 +91,9 @@ class ProfileController extends Controller
         // 全取引の未読件数合計
         $totalUnreadCount = $transactionList->sum('unread_count');
 
+        // 取引評価の平均値を算出
+        $averageEvaluation = Auth::user()->averageEvaluation();
+
         $response = [
             'profileImage' => $profile->image,
             'userName' => $userName,
@@ -98,6 +101,7 @@ class ProfileController extends Controller
             'purchaseList' => $purchaseList,
             'transactionList' => $transactionList,
             'totalUnreadCount' => $totalUnreadCount,
+            'averageEvaluation' => $averageEvaluation,
         ];
 
         return response()->json($response, Response::HTTP_OK);
