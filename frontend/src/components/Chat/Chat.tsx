@@ -5,14 +5,11 @@ type ChatProps = {
     chat: TransactionChatType;
     userId: number | null;
     onEdit: (chat: TransactionChatType) => void;
+    onDelete: (chatId: number) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ chat, userId, onEdit }) => {
+const Chat: React.FC<ChatProps> = ({ chat, userId, onEdit, onDelete }) => {
     const imageUrl = "http://localhost:80/storage/";
-
-    const deleteChat = () => {
-
-    };
 
     return (
         <>
@@ -53,7 +50,7 @@ const Chat: React.FC<ChatProps> = ({ chat, userId, onEdit }) => {
                         onClick={() => onEdit(chat)}
                     >編集</span>
                     <span
-                        onClick={deleteChat}
+                        onClick={() => onDelete(chat.chat_id)}
                     >削除</span>
                 </StyledBtnArea>
             </StyledContent>

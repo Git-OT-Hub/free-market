@@ -6,6 +6,7 @@ use App\Services\Contracts\TransactionServiceInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Http\Requests\ChatRequest;
 use App\Http\Requests\ChatEditRequest;
+use App\Models\Chat;
 
 class TransactionService implements TransactionServiceInterface
 {
@@ -152,6 +153,27 @@ class TransactionService implements TransactionServiceInterface
                 'chat_message' => $chat->message ?? null,
                 'chat_image' => $chat->image ?? null,
             ];
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * チャットの削除
+     *
+     * @param string $id
+     * @return Chat|null
+     */
+    public function deleteChatContent(string $id): Chat|null
+    {
+        try {
+            $res = $this->transactionRepository->destroyChatContent($id);
+
+            if (!$res) {
+                return null;
+            }
+
+            return $res;
         } catch (\Throwable $e) {
             return null;
         }

@@ -78,7 +78,30 @@ class TransactionController extends Controller
 
         if (!$res) {
             return response()->json([
-                'message' => '取引内容の取得に失敗しました'
+                'message' => 'チャットの編集処理に失敗しました'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json($res, Response::HTTP_OK);
+    }
+
+    /**
+     * チャットの削除処理を行い、その結果を JSON形式で返す
+     *
+     * @param string $id
+     * @return JsonResponse
+    */
+    public function deleteChat(string $id): JsonResponse
+    {
+        // ポリシーの呼び出し
+        $chat = Chat::find($id);
+        $this->authorize('delete', $chat);
+
+        $res = $this->transactionService->deleteChatContent($id);
+
+        if (!$res) {
+            return response()->json([
+                'message' => 'チャットの削除処理に失敗しました'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

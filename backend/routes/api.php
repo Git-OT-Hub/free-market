@@ -60,5 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::get('/transaction/{id}/contents', [TransactionController::class, 'contents']);
         // チャット編集
         Route::post('/transaction/chat/update', [TransactionController::class, 'updateChat']);
+        // チャット削除
+        Route::delete('/transaction/chat/{id}/delete', [TransactionController::class, 'deleteChat']);
     });
 });

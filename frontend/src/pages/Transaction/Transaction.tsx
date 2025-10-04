@@ -225,6 +225,35 @@ const Transaction: React.FC = () => {
         closeModal();
     };
 
+    // チャット削除
+    const handleDeleteChat = (chatId: number) => {
+        console.log('delete')
+        console.log(chatId)
+        if (confirm("このチャット削除しますか？")) {
+            http.delete(`/api/transaction/chat/${chatId}/delete`)
+                .then((res) => {
+                    if (res.status !== HTTP_OK) {
+                        console.error('予期しないエラー: ', res.status);
+                        return;
+                    }
+
+                    setShouldScroll(false);
+                    const deletedId = res.data.id;
+                    setChats((prevChats) =>
+                        prevChats.filter((chat) => chat.chat_id !== deletedId)
+                    );
+                })
+                .catch((e) => {
+                    if (e.status === HTTP_FORBIDDEN) {
+                        navigate('/mypage', { state: {type: 'failure', text: 'コンテンツが見つかりませんでした'}, replace: true });
+                        return;
+                    }
+
+                    console.error('予期しないエラー: ', e);
+                });
+        }
+    };
+
     if (loading) {
         return (
             <Loading />
@@ -284,6 +313,7 @@ const Transaction: React.FC = () => {
                                 chat={chat}
                                 userId={userId}
                                 onEdit={(chat) => setEditingChat(chat)}
+                                onDelete={handleDeleteChat}
                             />
                         ))}
                         <div id="chat-end" ref={chatEndRef} />

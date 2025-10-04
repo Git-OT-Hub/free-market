@@ -229,4 +229,31 @@ class TransactionRepository implements TransactionRepositoryInterface
             return null;
         }
     }
+
+    /**
+     * チャット削除
+     *
+     * @param string $id
+     * @return Chat|null
+     */
+    public function destroyChatContent(string $id): Chat|null
+    {
+        try {
+            $res = DB::transaction(function () use($id) {
+                $chat = Chat::find($id);
+
+                // 既存の画像があれば削除
+                if ($currentImage = $chat->image) {
+                    Storage::disk("public")->delete($currentImage);
+                }
+                $chat->delete();
+
+                return $chat;
+            });
+
+            return $res;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
 }

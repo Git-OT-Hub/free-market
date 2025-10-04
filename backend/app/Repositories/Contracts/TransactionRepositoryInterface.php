@@ -46,4 +46,12 @@ interface TransactionRepositoryInterface
      * }|null
      */
     public function fixChatContent(ChatEditRequest $request): array|null;
+
+    /**
+     * チャット削除
+     *
+     * @param string $id
+     * @return Chat|null
+     */
+    public function destroyChatContent(string $id): Chat|null;
 }

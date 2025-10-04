@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\ChatRequest;
 use App\Http\Requests\ChatEditRequest;
 use App\Models\Item;
+use App\Models\Chat;
 
 interface TransactionServiceInterface
 {
@@ -62,4 +63,12 @@ interface TransactionServiceInterface
      * }|null
      */
     public function updateChatContent(ChatEditRequest $request): array|null;
+
+    /**
+     * チャットの削除
+     *
+     * @param string $id
+     * @return Chat|null
+     */
+    public function deleteChatContent(string $id): Chat|null;
 }
